@@ -15,7 +15,7 @@
 //   <github username of the original script author>
 module.exports = function (robot) {
   //For now let's just try to get some cards
-  robot.respond(/gatherer\s*(.*)/i, function (res) {
+  robot.respond(/gatherer\s+(.*)/i, function (res) {
     //TODO: Use node's http or some other means to make the call to deckbrew
     //TODO: respond with the cards that were found
   });
