@@ -15,8 +15,19 @@
 //   <github username of the original script author>
 module.exports = function (robot) {
   //For now let's just try to get some cards
+
   robot.respond(/gatherer\s+(.*)/i, function (res) {
-    //TODO: Use node's http or some other means to make the call to deckbrew
-    //TODO: respond with the cards that were found
+    var cardName = res.match[1];
+
+    robot.http('https://api.deckbrew.com/mtg/cards?name=' + cardName)
+      .header('Accept', 'application/json')
+      .get()(function(error, response, body) {
+          if (error) {
+            //TODO: respond with error message
+          } else {
+            var card = JSON.parse(body)[0];
+            res.send(JSON.stringify(card));
+          }
+        });
   });
 };
