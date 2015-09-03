@@ -10,7 +10,7 @@ Simply type:
 [bot] gatherer [card name]
 ```
 
-It will return the image of the card, unless the service returns an object that does not have an image. Then it will return the JSON representation of the card.
+It will return the image of the first card it matches, unless the data returned does not have an image. Then it will return the JSON representation of the card.
 
 ## Testing
 
