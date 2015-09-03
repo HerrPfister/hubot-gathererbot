@@ -1,5 +1,5 @@
 // Description:
-//   A simple bot that can look up mtg cards
+//   A simple bot that queries the deckbrew service for specific cards.
 //
 // Commands:
 //   hubot gatherer [card name] - queries the card service and returns the first card the query found
@@ -8,7 +8,7 @@
 //   <optional notes required for the script>
 //
 // Author:
-//   <github username of the original script author>
+//   HerrPfister and wickerpopstar
 
 module.exports = function (robot) {
   robot.respond(/gatherer\s+(.*)/i, function (res) {
