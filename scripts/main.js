@@ -2,7 +2,7 @@
 //   A simple bot that can look up mtg cards
 //
 // Commands:
-//   hubot gatherer [card name] - queries the card service and returns the first card the query returns
+//   hubot gatherer [card name] - queries the card service and returns the first card the query found
 //
 // Notes:
 //   <optional notes required for the script>
