@@ -22,9 +22,17 @@ module.exports = function (robot) {
           } else {
             // For simplicity sake I am just grabbing the first card from the query,
             // and then using the image of the first print from the card's editions.
-            // TODO: add in null checks
+
             var card = JSON.parse(body)[0];
-            res.send(card.editions[0].image_url);
+
+            if (card) {
+              var cardImage = card.editions[0].image_url;
+
+              // If the object has an image send that back. Otherwise, send back the raw JSON.
+              res.send(cardImage || card);
+            } else {
+              res.send('We could not find the card ' + cardName + '. Please try again.');
+            }
           }
         });
 
