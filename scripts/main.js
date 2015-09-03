@@ -18,7 +18,7 @@ module.exports = function (robot) {
       .header('Accept', 'application/json')
       .get()(function(error, response, body) {
           if (error) {
-            // TODO: respond with error message
+            res.send('There was an issue with your request. Please try again later.');
           } else {
             // For simplicity sake I am just grabbing the first card from the query,
             // and then using the image of the first print from the card's editions.
