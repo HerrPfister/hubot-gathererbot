@@ -1,6 +1,6 @@
 # gathererbot
 
-A simple bot that queries the [deckbrew](https://deckbrew.com/api/) service for specific cards.
+A simple bot that queries the [deckbrew](https://deckbrew.com/api/) service for specific Magic the Gathering cards.
 
 ## Searching for cards
 
@@ -10,7 +10,7 @@ Simply type:
 [bot] gatherer [card name]
 ```
 
-It will return the image of the first card it matches, unless the data returned does not have an image. Then it will return the JSON representation of the card.
+It will return the image of the first card it matches. Unless, the data returned does not have an image. Then it will return the JSON representation of the card.
 
 ## Testing
 
