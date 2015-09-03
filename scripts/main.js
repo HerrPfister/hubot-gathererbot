@@ -12,7 +12,7 @@
 
 module.exports = function (robot) {
 
-  // As of right, now we are just capturing everything after the gatherer command.
+  // As of right now, we are just capturing everything after the gatherer command.
   // However, later we can make it more customizable if we want.
   // i.e. getting subtypes, color, rarity, etc.
   robot.respond(/gatherer\s+(.*)/i, function (res) {
