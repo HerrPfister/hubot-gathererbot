@@ -50,7 +50,17 @@ module.exports = function (robot) {
               var card = cards[0];
 
               if (card) {
-                var cardImage = card.editions[0].image_url;
+                // Get first multiverse_id that isn't 0 (non-set editions don't have a multiverse_id)
+                var multiverse_id = '0';
+                var cardImage;
+
+                for (var k = 0; k < card.editions.length; k++) {
+                  if (card.editions[k].multiverse_id !== '0') {
+                    multiverse_id = card.editions[k].multiverse_id;
+                    cardImage = card.editions[k].image_url;
+                    break;
+                  }
+                }
                 // If the object has an image print that. Otherwise, print the rules data.
                 if (cardImage){
                     res.send(cardImage);
@@ -64,6 +74,10 @@ module.exports = function (robot) {
                     if (card.power)
                       res.send(card.power + "/" + card.toughness);
                 }
+                // Add link to view in Gatherer
+                var gathererText = "View in Gatherer";
+                var gathererLink = gathererText.link('http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=' + multiverse_id);
+                res.send(gathererLink);
               } else {
                 res.send('We could not find the card ' + cardName + '. Please try again.');
               }
