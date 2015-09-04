@@ -2,7 +2,8 @@
 //   A simple bot that queries the deckbrew service for specific cards.
 //
 // Commands:
-//   hubot gatherer [card name] - queries the card service and returns the first card the query found
+//   hubot gatherer [card name] - queries the card service and returns the exact match
+//                                if it exists, or names of full search results.
 //
 // Notes:
 //   <optional notes required for the script>
