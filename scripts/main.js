@@ -26,18 +26,37 @@ module.exports = function (robot) {
           if (error) {
             res.send('There was an issue with your request. Please try again later.');
           } else {
-            // For simplicity's sake I am just grabbing the first card from the query,
-            // and then using the image from the first edition in that card's "editions" list.
+            var displayCount = 5;
+            var cards = JSON.parse(body);
 
-            var card = JSON.parse(body)[0];
+            // If there are multiple matches from a search, and no exact match,
+            // print a list of the names of the first 5 cards (or fewer if
+            // there are fewer than five results) in alphabetical order
+            if (cards.length > 1) {
+              var numOut = displayCount < cards.length ? displayCount : cards.length;
+              res.send('Displaying top ' + numOut + ' of ' + cards.length + ' : \n');
 
-            if (card) {
-              var cardImage = card.editions[0].image_url;
+              // ToDo: Instead of just text, this can be a gatherer link.
+              for (var i = 0; i < numOut; i++) {
+                res.send(cards[i].name);
+              }
 
-              // If the object has an image send that back. Otherwise, send back the raw JSON.
-              res.send(cardImage || card);
-            } else {
-              res.send('We could not find the card ' + cardName + '. Please try again.');
+              var remaining = cards.length - numOut;
+              if (remaining > 0)
+                res.send("...\n" + remaining + ' other results matching search: "' + cardName + '"');
+            }
+            else
+            {
+              var card = cards[0];
+
+              if (card) {
+                var cardImage = card.editions[0].image_url;
+
+                // If the object has an image send that back. Otherwise, send back the raw JSON.
+                res.send(cardImage || card);
+              } else {
+                res.send('We could not find the card ' + cardName + '. Please try again.');
+              }
             }
           }
         });
