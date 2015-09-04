@@ -40,12 +40,15 @@ function getCardDetails(card) {
   }
 
   var cardEdition = getValidCardEdition(card);
-  var multiverseID = (cardEdition) ? cardEdition.multiverse_id : '';
-  var cardImage = (cardEdition) ? cardEdition.image_url : '';
+  var multiverseID = cardImage = gathererText = gathererLink = gathererInfo = '';
 
-  var gathererText = "View in Gatherer: ";
-  var gathererLink = "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + multiverseID;
-  var gathererInfo = gathererText + gathererLink;
+  if (cardEdition) {
+    multiverseID = cardEdition.multiverse_id;
+    cardImage = cardEdition.image_url;
+    gathererText = "View in Gatherer: ";
+    gathererLink = "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + multiverseID;
+    gathererInfo = gathererText + gathererLink;
+  }
 
   return {
     name: card.name,
