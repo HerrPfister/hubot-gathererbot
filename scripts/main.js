@@ -11,6 +11,43 @@
 // Author:
 //   HerrPfister and wickerpopstar
 
+var consts = require('../consts/gatherer_consts.json');
+
+function findSpecificCard(cardName, cards) {
+  for (var i in cards) {
+    if (cardName.toLowerCase() === cards[i].name.toLowerCase()) {
+      return cards[i];
+    }
+  }
+
+  return undefined;
+}
+
+function getCardDetails(card) {
+  var cardEdition = (card.editions && card.editions.length > 0) ? card.editions[0] : undefined;
+
+  if (!cardEdition) {
+    return undefined;
+  }
+
+  var multiverse_id = cardEdition.multiverse_id;
+
+  var gathererText = "View in Gatherer: ";
+  var gathererLink = "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + multiverse_id;
+  var gathererInfo = gathererText + gathererLink;
+
+  return {
+    name: card.name,
+    text: card.text,
+    cost: card.cost,
+    types: card.types,
+    subtypes: card.subtypes,
+    gathererInfo: gathererInfo,
+    cardImage: cardEdition.image_url,
+    attributes: (card.power) ? card.power + "/" + card.toughness : ''
+  };
+}
+
 module.exports = function (robot) {
 
   // As of right now, we are just capturing everything after the gatherer command.
@@ -27,72 +64,45 @@ module.exports = function (robot) {
           if (error) {
             res.send('There was an issue with your request. Please try again later.');
           } else {
-            var displayCount = 5;
             var cards = JSON.parse(body);
-            // Count the number of exactly matching results. If there is one exact
-            // match, but multiple matches, should only print exact match, not list
-            var cardCount = 0;
-            for (var j = 0; j < cards.length; j++) {
-              if(cards[j].name.toLowerCase() === cardName.toLowerCase()){
-                cardCount++;
-              }
+            var cardCount = cards.length;
+
+            if (cardCount === 0) {
+              res.send('We could not find the card ' + cardName + '. Please try again.');
+              return;
             }
 
-            // If there are multiple matches from a search, and no exact match,
-            // print a list of the names of the first 5 cards (or fewer if
-            // there are fewer than five results) in alphabetical order
-            if ((cardCount !== 1) && cards.length > 1) {
-              var numOut = displayCount < cards.length ? displayCount : cards.length;
-              res.send('Displaying top ' + numOut + ' of ' + cards.length + ' : \n');
+            var card = findSpecificCard(cardName, cards);
 
-              // ToDo: Instead of just text, this can be a gatherer link.
-              for (var i = 0; i < numOut; i++) {
-                res.send(cards[i].name);
-              }
+            if (card) {
+              var cardDetails = getCardDetails(card);
 
-              var remaining = cards.length - numOut;
-              if (remaining > 0)
-                res.send("...\n" + remaining + ' other results matching search: "' + cardName + '"');
-            }
-            else
-            {
-              var card = cards[0];
-
-              if (card) {
-                // Get first multiverse_id that isn't 0 (non-set editions don't have a multiverse_id)
-                var multiverse_id = '0';
-                var cardImage;
-
-                // This should break when it finds a non-'0', but adding a break makes it misbehave
-                for (var k = 0; k < card.editions.length; k++) {
-                  if (card.editions[k].multiverse_id !== '0') {
-                    multiverse_id = card.editions[k].multiverse_id;
-                    cardImage = card.editions[k].image_url;
-                  }
-                }
-                // If the object has an image print that. Otherwise, print the rules data.
-                if (cardImage){
-                    res.send(cardImage);
-                }
-                else {
-                    res.send(card.name);
-                    res.send(card.cost);
-                    res.send(card.types);
-                    res.send(card.subtypes);
-                    res.send(card.text);
-                    if (card.power)
-                      res.send(card.power + "/" + card.toughness);
-                }
-                // Add link to view in Gatherer
-                var gathererText = "View in Gatherer";
-                var gathererLink = gathererText.link('http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=' + multiverse_id);
-                res.send(gathererLink);
+              if (!cardDetails) {
+                res.send('There was an issue with retrieving the details on the card you were looking for. Please try again.');
+                return;
+              } else if (cardDetails.cardImage){
+                res.send(cardDetails.cardImage);
               } else {
-                res.send('We could not find the card ' + cardName + '. Please try again.');
+                res.send(cardDetails.name);
+                res.send(cardDetails.text);
+                res.send(cardDetails.cost);
+                res.send(cardDetails.types);
+                res.send(cardDetails.subtypes);
+                res.send(cardDetails.attributes);
+              }
+
+              res.send(cardDetails.gathererInfo);
+
+            } else {
+              var cardLimit = consts.cardLimit;
+              var cardSample = cards.slice(0, cardLimit);
+
+              res.send('Displaying ' + cardSample.length + ' out of ' + cardCount + ' cards:');
+              for (var i in cardSample) {
+                res.send(cardSample[i].name);
               }
             }
           }
         });
-
   });
 };
