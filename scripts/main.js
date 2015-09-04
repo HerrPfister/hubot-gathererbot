@@ -28,11 +28,19 @@ module.exports = function (robot) {
           } else {
             var displayCount = 5;
             var cards = JSON.parse(body);
+            // Count the number of exactly matching results. If there is one exact
+            // match, but multiple matches, should only print exact match, not list
+            var cardCount = 0;
+            for (var j = 0; j < cards.length; j++) {
+              if(cards[j].name.toLowerCase() === cardName.toLowerCase()){
+                cardCount++;
+              }
+            }
 
             // If there are multiple matches from a search, and no exact match,
             // print a list of the names of the first 5 cards (or fewer if
             // there are fewer than five results) in alphabetical order
-            if (cards.length > 1) {
+            if ((cardCount !== 1) && cards.length > 1) {
               var numOut = displayCount < cards.length ? displayCount : cards.length;
               res.send('Displaying top ' + numOut + ' of ' + cards.length + ' : \n');
 
