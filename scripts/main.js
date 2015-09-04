@@ -51,9 +51,19 @@ module.exports = function (robot) {
 
               if (card) {
                 var cardImage = card.editions[0].image_url;
-
-                // If the object has an image send that back. Otherwise, send back the raw JSON.
-                res.send(cardImage || card);
+                // If the object has an image print that. Otherwise, print the rules data.
+                if (cardImage){
+                    res.send(cardImage);
+                }
+                else {
+                    res.send(card.name);
+                    res.send(card.cost);
+                    res.send(card.types);
+                    res.send(card.subtypes);
+                    res.send(card.text);
+                    if (card.power)
+                      res.send(card.power + "/" + card.toughness);
+                }
               } else {
                 res.send('We could not find the card ' + cardName + '. Please try again.');
               }
