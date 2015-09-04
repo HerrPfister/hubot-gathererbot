@@ -50,7 +50,7 @@ function getCardDetails(card) {
 module.exports = function (robot) {
   robot.respond(/gatherer random/i, function(res){
     // TODO: Find out what the seed number should be
-    var multiverseid = Math.floor(Math.random() * 50000);
+    var multiverseid = Math.floor(Math.random() * (consts.verseIDSeed - 1) + 1);
 
     robot.http(UrlMap.multiverseid + multiverseid)
       .header('Accept', 'application/json')
@@ -58,7 +58,8 @@ module.exports = function (robot) {
         if (error) {
           res.send(ErrorMsgMap.default)
         } else {
-          // TODO: return random card info
+          //TODO: Parse Body
+          console.log(body);
         }
       });
   });
@@ -66,7 +67,7 @@ module.exports = function (robot) {
   // As of right now, we are just capturing everything after the gatherer command.
   // However, later we can make it more customizable if we want.
   // i.e. getting subtypes, color, rarity, etc.
-  robot.respond(/gatherer\s+(.*)/i, function (res) {
+  robot.respond(/gatherer\sfind\s(.*)/i, function (res) {
 
     // Grab the captured user's input
     var cardName = res.match[1];
