@@ -62,11 +62,11 @@ module.exports = function (robot) {
                 var multiverse_id = '0';
                 var cardImage;
 
+                // This should break when it finds a non-'0', but adding a break makes it misbehave
                 for (var k = 0; k < card.editions.length; k++) {
                   if (card.editions[k].multiverse_id !== '0') {
                     multiverse_id = card.editions[k].multiverse_id;
                     cardImage = card.editions[k].image_url;
-                    break;
                   }
                 }
                 // If the object has an image print that. Otherwise, print the rules data.
