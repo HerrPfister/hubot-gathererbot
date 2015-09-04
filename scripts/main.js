@@ -23,17 +23,28 @@ function findSpecificCard(cardName, cards) {
   return undefined;
 }
 
-function getCardDetails(card) {
-  var cardEdition = (card.editions && card.editions.length > 0) ? card.editions[0] : undefined;
+function getValidCardEdition(card) {
+  for (var i in card.editions) {
+    var editionID = parseInt(card.editions[i].multiverse_id);
+    if (editionID > 0) {
+      return card.editions[i];
+    }
+  }
 
-  if (!cardEdition) {
+  return undefined;
+}
+
+function getCardDetails(card) {
+  if (!card.editions || card.editions.length === 0) {
     return undefined;
   }
 
-  var multiverse_id = cardEdition.multiverse_id;
+  var cardEdition = getValidCardEdition(card);
+  var multiverseID = (cardEdition) ? cardEdition.multiverse_id : '';
+  var cardImage = (cardEdition) ? cardEdition.image_url : '';
 
   var gathererText = "View in Gatherer: ";
-  var gathererLink = "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + multiverse_id;
+  var gathererLink = "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=" + multiverseID;
   var gathererInfo = gathererText + gathererLink;
 
   return {
@@ -41,9 +52,9 @@ function getCardDetails(card) {
     text: card.text,
     cost: card.cost,
     types: card.types,
+    cardImage: cardImage,
     subtypes: card.subtypes,
     gathererInfo: gathererInfo,
-    cardImage: cardEdition.image_url,
     attributes: (card.power) ? card.power + "/" + card.toughness : ''
   };
 }
