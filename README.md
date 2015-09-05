@@ -1,6 +1,6 @@
 # gathererbot
 
-A simple bot that queries the [deckbrew](https://deckbrew.com/api/) service for Magic the Gathering cards.
+A simple hubot that queries the [deckbrew](https://deckbrew.com/api/) service for Magic the Gathering cards.
 
 ## Searching for cards
 
