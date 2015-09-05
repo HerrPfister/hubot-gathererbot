@@ -11,88 +11,134 @@
 // Author:
 //   HerrPfister and wickerpopstar
 
-module.exports = function (robot) {
+var find = require('lodash/collection/find');
+var isEmpty = require('lodash/lang/isEmpty');
+var consts = require('../consts/consts');
 
-  // As of right now, we are just capturing everything after the gatherer command.
-  // However, later we can make it more customizable if we want.
+var UrlMap = consts.urlMap;
+var MessageMap = consts.messageMap;
+var ErrorMessageMap = consts.errorMessageMap;
+
+function getCardDetails(card) {
+  if (isEmpty(card.editions)) {
+    return undefined;
+  }
+
+  var cardEdition = find(card.editions, function(edition){
+    return parseInt(edition.multiverse_id) > 0;
+  });
+
+  var multiverseid = cardImage = gathererText = '';
+
+  if (cardEdition) {
+    cardImage = cardEdition.image_url;
+    multiverseid = cardEdition.multiverse_id;
+    gathererText = "View in Gatherer: " + UrlMap.gatherer + multiverseid;
+  }
+
+  return {
+    name: card.name,
+    text: card.text,
+    cost: card.cost,
+    types: card.types,
+    cardImage: cardImage,
+    subtypes: card.subtypes,
+    gathererText: gathererText,
+    attributes: (card.power) ? card.power + "/" + card.toughness : ''
+  };
+}
+
+function sendDetails(res, cardDetails) {
+  // If cardDetails is undefined then something strange
+  // is going on with the data returned by the service. Otherwise,
+  // display all the relevant data.
+  if (!cardDetails) {
+    res.send(ErrorMessageMap.cardDetail);
+    return;
+  }
+
+  if (cardDetails.cardImage){
+    res.send(cardDetails.cardImage);
+  } else {
+    res.send(cardDetails.name);
+    res.send(cardDetails.text);
+    res.send(cardDetails.cost);
+    res.send(cardDetails.types);
+    res.send(cardDetails.subtypes);
+    res.send(cardDetails.attributes);
+  }
+
+  res.send(cardDetails.gathererText);
+}
+
+module.exports = function (robot) {
+  robot.respond(/gatherer random/i, function(res){
+    // NOTE: We are using a seed that may change over time.
+    // We need a more dynamic way of getting the max multiverseid.
+    // This will generate an id between 1 and 4980.
+    var multiverseid = Math.floor(Math.random() * (consts.verseIDSeed - 1) + 1);
+
+    robot.http(UrlMap.multiverseid + multiverseid)
+      .header('Accept', 'application/json')
+      .get()(function(error, response, body) {
+        if (error) {
+          res.send(ErrorMessageMap.default)
+        } else {
+          var card = JSON.parse(body);
+
+          if (!isEmpty(card)) {
+            var cardDetails = getCardDetails(card[0]);
+            sendDetails(res, cardDetails);
+          } else {
+            res.send(ErrorMessageMap.multiverseIdNotFound(multiverseid));
+          }
+        }
+      });
+  });
+
+  // NOTE: As of right now, we are just capturing everything after the find
+  // command. However, later we can make it more customizable if we want.
   // i.e. getting subtypes, color, rarity, etc.
-  robot.respond(/gatherer\s+(.*)/i, function (res) {
+  robot.respond(/gatherer\sfind\s(.*)/i, function (res) {
 
     // Grab the captured user's input
     var cardName = res.match[1];
 
-    robot.http('https://api.deckbrew.com/mtg/cards?name=' + cardName)
+    robot.http(UrlMap.cardName + cardName)
       .header('Accept', 'application/json')
       .get()(function(error, response, body) {
-          if (error) {
-            res.send('There was an issue with your request. Please try again later.');
+        if (error) {
+          res.send(ErrorMessageMap.default);
+        } else {
+          var cards = JSON.parse(body);
+
+          if (!isEmpty(cards)) {
+            var card = find(cards, function(card){
+              return cardName.toLowerCase() === card.name.toLowerCase()
+            });
+
+            // If find() comes back with a match that means it found the exact card the user was
+            // looking for. Otherwise, that means the service has found more than one match.
+            if (card) {
+              var cardDetails = getCardDetails(card);
+              sendDetails(res, cardDetails);
+
+            } else {
+              // Grab the first X amount of cards, which is determined from the constant cardLimit.
+              // Then print off the name of each card.
+              var cardLimit = consts.cardLimit;
+              var cardSample = cards.slice(0, cardLimit);
+
+              res.send(MessageMap.cardPoolSize(cardSample.length, cards.length));
+
+              for (var i in cardSample) {
+                res.send(cardSample[i].name);
+              }
+            }
           } else {
-            var displayCount = 5;
-            var cards = JSON.parse(body);
-            // Count the number of exactly matching results. If there is one exact
-            // match, but multiple matches, should only print exact match, not list
-            var cardCount = 0;
-            for (var j = 0; j < cards.length; j++) {
-              if(cards[j].name.toLowerCase() === cardName.toLowerCase()){
-                cardCount++;
-              }
-            }
-
-            // If there are multiple matches from a search, and no exact match,
-            // print a list of the names of the first 5 cards (or fewer if
-            // there are fewer than five results) in alphabetical order
-            if ((cardCount !== 1) && cards.length > 1) {
-              var numOut = displayCount < cards.length ? displayCount : cards.length;
-              res.send('Displaying top ' + numOut + ' of ' + cards.length + ' : \n');
-
-              // ToDo: Instead of just text, this can be a gatherer link.
-              for (var i = 0; i < numOut; i++) {
-                res.send(cards[i].name);
-              }
-
-              var remaining = cards.length - numOut;
-              if (remaining > 0)
-                res.send("...\n" + remaining + ' other results matching search: "' + cardName + '"');
-            }
-            else
-            {
-              var card = cards[0];
-
-              if (card) {
-                // Get first multiverse_id that isn't 0 (non-set editions don't have a multiverse_id)
-                var multiverse_id = '0';
-                var cardImage;
-
-                // This should break when it finds a non-'0', but adding a break makes it misbehave
-                for (var k = 0; k < card.editions.length; k++) {
-                  if (card.editions[k].multiverse_id !== '0') {
-                    multiverse_id = card.editions[k].multiverse_id;
-                    cardImage = card.editions[k].image_url;
-                  }
-                }
-                // If the object has an image print that. Otherwise, print the rules data.
-                if (cardImage){
-                    res.send(cardImage);
-                }
-                else {
-                    res.send(card.name);
-                    res.send(card.cost);
-                    res.send(card.types);
-                    res.send(card.subtypes);
-                    res.send(card.text);
-                    if (card.power)
-                      res.send(card.power + "/" + card.toughness);
-                }
-                // Add link to view in Gatherer
-                var gathererText = "View in Gatherer";
-                var gathererLink = gathererText.link('http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=' + multiverse_id);
-                res.send(gathererLink);
-              } else {
-                res.send('We could not find the card ' + cardName + '. Please try again.');
-              }
-            }
+            res.send(ErrorMessageMap.cardNotFound(cardName));
           }
-        });
-
+        }
+      });
   });
 };
