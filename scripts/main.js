@@ -131,6 +131,8 @@ module.exports = function (robot) {
 
               res.send(MessageMap.cardPoolSize(cardSample.length, cards.length));
 
+              // TODO: Custom sort cards before printing names. The ordering that the
+              // service sends them back is a little strange.
               for (var i in cardSample) {
                 res.send(cardSample[i].name);
               }
