@@ -1,2 +1,10 @@
+## Folders ##
+#############
+
 node_modules/
+
+## Files ##
+###########
+
+.DS_STORE
 .hubot_history

@@ -13,6 +13,8 @@ module.exports = {
     verseIdNotFound: function(multiverseid) { return "We could not find the card with multiverse id" + multiverseid + ". Please try again."; }
   },
   "messageMap": {
-    cardPoolSize: function (sampleSize, poolSize) { return 'Displaying ' + sampleSize + ' out of ' + poolSize + ' cards:'; }
+    cardPoolSize: function (sampleSize, poolSize) { return 'Displaying ' + sampleSize + ' out of ' + poolSize + ' cards:'; },
+    clashWinner: function (winnerName) { return 'Clash resolved! ' + winnerName + ' is the winner!'; },
+    clashDefault: function (challenger, opponent) { return challenger + ' challenges ' + opponent + ' to a mtg clash.'; }
   }
 };
