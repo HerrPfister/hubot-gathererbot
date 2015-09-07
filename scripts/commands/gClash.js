@@ -1,16 +1,16 @@
-var MessageMap = require('../../consts/consts').messageMap;
+var MessageMap = require('../../static/consts').messageMap;
 
 module.exports = {
-  resolveClash: function(robo, challenger, opponent) {
+  resolveClash: function(robo, challenger, challenged) {
     var challengerCMC = parseInt(challenger.card.cmc);
-    var opponentCMC = parseInt(opponent.card.cmc);
+    var challengedCMC = parseInt(challenged.card.cmc);
 
-    robo.send(MessageMap.clashDefault(challenger.name, opponent.name));
+    robo.send(MessageMap.clashDefault(challenger.name, challenged.name));
 
-    if (challengerCMC > opponentCMC) {
+    if (challengerCMC > challengedCMC) {
       robo.send(MessageMap.clashWinner(challenger.name));
     } else {
-      robo.send(MessageMap.clashWinner(opponent.name));
+      robo.send(MessageMap.clashWinner(challenged.name));
     }
   }
 };

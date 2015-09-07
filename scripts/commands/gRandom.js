@@ -1,7 +1,7 @@
 var utils = require('../utils/utils');
 var isEmpty = require('lodash/lang/isEmpty');
 
-var ErrorMessageMap = require('../../consts/consts').errorMessageMap;
+var ErrorMessageMap = require('../../static/consts').errorMessageMap;
 
 module.exports = {
   parseResponse: function(robo, body) {

@@ -11,7 +11,7 @@
 // Author:
 //   HerrPfister and wickerpopstar
 
-var UrlMap = require('../consts/consts').urlMap;
+var UrlMap = require('../static/consts').urlMap;
 
 var utils = require('./utils/utils');
 var GathererFind = require('./commands/gFind');
@@ -27,14 +27,14 @@ module.exports = function (robot) {
       }
     };
 
-    var opponent = {
+    var challenged = {
       name: robo.match[1],
       card: {
         cmc: utils.getRandomMultiverseId()
       }
     };
 
-    GathererClash.resolveClash(robo, challenger, opponent);
+    GathererClash.resolveClash(robo, challenger, challenged);
   });
 
   robot.respond(/gatherer\s+random/i, function(robo){
@@ -51,21 +51,21 @@ module.exports = function (robot) {
       });
   });
 
-  // NOTE: As of right now, we are just capturing everything after the find
-  //       command. However, later we can make it more customizable if we want.
-  //       i.e. getting subtypes, color, rarity, etc.
   robot.respond(/gatherer\s+find\s+(.*)/i, function (robo) {
 
-    // Grab the captured user's input
-    var cardName = robo.match[1];
+    // Grab the captured user's input and parse for search params
+    var cardName = utils.getCardName(robo.match[1]);
+    var urlParams = utils.parseInput(robo.match[1]);
 
-    robot.http(UrlMap.cardName + cardName)
+    robot.http(UrlMap.gathererFind + urlParams)
       .header('Accept', 'application/json')
       .get()(function(err, res, body){
-        if (err) {
+        if (!cardName) {
+          GathererFind.parseCommandError(robo, err);
+        } else if (err) {
           GathererFind.parseError(robo, err);
         } else {
-          GathererFind.parseResponse(robo, body);
+          GathererFind.parseResponse(robo, body, cardName);
         }
       });
   });

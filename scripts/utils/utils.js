@@ -1,11 +1,40 @@
 var find = require('lodash/collection/find');
 var isEmpty = require('lodash/lang/isEmpty');
 
-var consts = require('../../consts/consts');
+var consts = require('../../static/consts');
 var UrlMap = consts.urlMap;
 var ErrorMessageMap = consts.errorMessageMap;
 
+function hasMultipleParams(userInput) {
+  return (userInput.indexOf('=') > -1);
+}
+
 module.exports = {
+  composeUrlParams: function(userInput) {
+    if (hasMultipleParams(userInput)) {
+      var urlParams = userInput.split(' ');
+      return urlParams.join('&');
+    } else {
+      return 'name=' + userInput;
+    }
+  },
+
+  getCardName: function(userInput) {
+    if (!hasMultipleParams(userInput)) {
+      return userInput;
+    }
+
+    var params = userInput.split('=');
+
+    for (var i in params) {
+      if (params[i] === 'name') {
+        return params[i+1];
+      }
+    }
+
+    return undefined;
+  },
+
   getRandomMultiverseId: function() {
     // NOTE: We are using a seed that may change over time.
     //       We need a more dynamic way of getting the max multiverseid.

@@ -1,5 +1,5 @@
 var utils = require('../utils/utils');
-var consts = require('../../consts/consts');
+var consts = require('../../static/consts');
 var find = require('lodash/collection/find');
 var isEmpty = require('lodash/lang/isEmpty');
 
@@ -7,7 +7,7 @@ var MessageMap = consts.messageMap;
 var ErrorMessageMap = consts.errorMessageMap;
 
 module.exports = {
-  parseResponse: function(robo, body) {
+  parseResponse: function(robo, body, cardName) {
     var cards = JSON.parse(body);
 
     var card = (isEmpty(cards)) ? undefined : find(cards, function(card){
@@ -37,6 +37,10 @@ module.exports = {
     } else {
       robo.send(ErrorMessageMap.cardNotFound(cardName));
     }
+  },
+
+  parseCommandError: function(robo) {
+    robo.send(ErrorMessageMap.findCommandError);
   },
 
   parseError: function(robo, error) {
