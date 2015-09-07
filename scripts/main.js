@@ -2,8 +2,15 @@
 //   A simple hubot that queries the deckbrew service for specific cards.
 //
 // Commands:
-//   hubot gatherer [card name] - queries the card service and returns the exact match
-//                                if it exists, or names of full search results.
+//   hubot gatherer find [search param1]=[search value1] ...
+//   hubot gatherer find [card name] - bot commands query the card service and return the exact match
+//                                     if it exists, or names of other partially matched cards.
+//
+//   hubot gatherer random - this command will query the service for a random card.
+//
+//   hubot gatherer clash [@handler] - this command will query the service for two random cards and
+//                                     then compare the converted mana costs to see which has a
+//                                     higher cost.
 //
 // Notes:
 //   <optional notes required for the script>
