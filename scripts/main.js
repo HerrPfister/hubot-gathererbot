@@ -3,14 +3,13 @@
 //
 // Commands:
 //   hubot gatherer find [search param1]=[search value1] ...
-//   hubot gatherer find [card name] - bot commands query the card service and return the exact match
+//   hubot gatherer find [card name] - both commands query the service and return the exact match,
 //                                     if it exists, or names of other partially matched cards.
 //
 //   hubot gatherer random - this command will query the service for a random card.
 //
 //   hubot gatherer clash [@handler] - this command will query the service for two random cards and
-//                                     then compare the converted mana costs to see which has a
-//                                     higher cost.
+//                                     then compare their converted mana costs to see which is higher
 //
 // Notes:
 //   <optional notes required for the script>
@@ -62,7 +61,9 @@ module.exports = function (robot) {
 
     // Grab the captured user's input and parse for search params
     var cardName = utils.getCardName(robo.match[1]);
-    var urlParams = utils.parseInput(robo.match[1]);
+    var urlParams = utils.parseUrlParams(robo.match[1]);
+
+    console.log(cardName)
 
     robot.http(UrlMap.gathererFind + urlParams)
       .header('Accept', 'application/json')

@@ -10,7 +10,7 @@ function hasMultipleParams(userInput) {
 }
 
 module.exports = {
-  composeUrlParams: function(userInput) {
+  parseUrlParams: function(userInput) {
     if (hasMultipleParams(userInput)) {
       var urlParams = userInput.split(' ');
       return urlParams.join('&');
@@ -24,9 +24,9 @@ module.exports = {
       return userInput;
     }
 
-    var params = userInput.split('=');
+    var params = userInput.split(/[ =]/gi);
 
-    for (var i in params) {
+    for (var i = 0; i < params.length; i++) {
       if (params[i] === 'name') {
         return params[i+1];
       }
