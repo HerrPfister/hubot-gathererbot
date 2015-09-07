@@ -37,7 +37,7 @@ Simply type:
 
 It will return the image of the card, unless the data returned does not contain an image. Then it will return the rules text of the card.
 
-## Settle disputes with clash!
+## Settle a dispute with clash!
 
 Simply type:
 
