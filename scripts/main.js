@@ -28,19 +28,35 @@ module.exports = function (robot) {
   robot.respond(/gatherer\s+clash\s+(@\w+)/i, function(robo) {
     var challenger = {
       name: robo.message.user.name,
-      card: {
-        cmc: utils.getRandomMultiverseId()
-      }
+      card: {}
     };
 
     var challenged = {
       name: robo.match[1],
-      card: {
-        cmc: utils.getRandomMultiverseId()
-      }
+      card: {}
     };
 
-    GathererClash.resolveClash(robo, challenger, challenged);
+    // TODO: Find if there is a better way of getting two random cards from
+    //       the service, because this is not the prettiest.
+    robot.http(UrlMap.multiverseid + utils.getRandomMultiverseId())
+      .get()(function(err, res, body){
+        if (err) {
+          GathererClash.parseError(robo, err);
+        } else {
+          challenger.card = JSON.parse(body);
+
+          robot.http(UrlMap.multiverseid + utils.getRandomMultiverseId())
+            .get()(function(err, res, body){
+              if (err) {
+                GathererClash.parseError(robo, err);
+              } else {
+                challenged.card = JSON.parse(body);
+
+                GathererClash.resolveClash(robo, challenger, challenged);
+              }
+            });
+        }
+      });
   });
 
   robot.respond(/gatherer\s+random/i, function(robo){

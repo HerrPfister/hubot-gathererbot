@@ -15,6 +15,7 @@ module.exports = {
   },
   "messageMap": {
     clashWinner: function (winnerName) { return 'Clash resolved! ' + winnerName + ' is the winner!'; },
+    clashCardDraw: function (name, card) { return name + ' drew ' + card.name + ' which has a converted mana cost of ' + card.cmc; },
     clashDefault: function (challenger, opponent) { return challenger + ' challenges ' + opponent + ' to a mtg clash.'; },
     cardPoolSize: function (sampleSize, poolSize) { return 'Displaying ' + sampleSize + ' out of ' + poolSize + ' cards:'; }
   }
