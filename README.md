@@ -42,7 +42,7 @@ set          |string| A three letter identifier for a Magic set
 status       |string| Only show cards with the given status. Legal values are legal, banned or restricted
 subtype      |string| Any valid card subtype. Possible values include zombie and tribal.
 supertype  |string| Any valid card supertype, such as legendary
-type	     |string|	Any valid card type. Possible values include enchantment and
+type	     |string|	Any valid card type. Possible values include enchantment, instant, sorcery, etc.
 
 ## Getting a random card
 
