@@ -31,18 +31,18 @@ Either way will return the image of the card, unless the data returned does not 
 
 Name |	Type |	Description
 ---- | ----- | ------------
-color      |string| Select cards of the chosen color
+color      |string| Select cards with the chosen color.
 format       |string| Only show cards allowed in a specific format. Legal values are vintage, legacy, modern, standard, and commander
-multicolor   |bool| Only show cards that are multicolored. Legal values are true and false
-multiverseid |string| Select cards of that have at least one edition with the given Multiverse ID
-name       |string| A fuzzy match on a card's name
-oracle       |string| A fuzzy match on a card's Oracle rules text
-rarity       |string| Select cards printed at this rarity. Options are common, uncommon, rare and mythic
-set          |string| A three letter identifier for a Magic set
-status       |string| Only show cards with the given status. Legal values are legal, banned or restricted
-subtype      |string| Any valid card subtype. Possible values include zombie and tribal.
-supertype  |string| Any valid card supertype, such as legendary
-type	     |string|	Any valid card type. Possible values include enchantment, instant, sorcery, etc.
+multicolor   |bool| Only show cards that are multicolored. Legal values are true and false.
+multiverseid |string| Select cards that have at least one edition with the given Multiverse ID.
+name       |string| A fuzzy match on a card's name.
+oracle       |string| A fuzzy match on a card's Oracle rules text.
+rarity       |string| Select cards printed at this rarity. Options are common, uncommon, rare and mythic.
+set          |string| A three letter identifier for a Magic set, such as "ZEN" for the send Zendikar set.
+status       |string| Only show cards with the given status. Legal values are legal, banned or restricted.
+subtype      |string| Any valid card subtype. Possible values include zombie, goblin, or other tribal subtypes.
+supertype  |string| Any valid card supertype, such as legendary.
+type	     |string|	Any valid card type. Possible options include enchantment, instant, sorcery, creature, and artifact.
 
 ## Getting a random card
 
