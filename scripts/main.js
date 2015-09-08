@@ -63,8 +63,6 @@ module.exports = function (robot) {
     var cardName = utils.getCardName(robo.match[1]);
     var urlParams = utils.parseUrlParams(robo.match[1]);
 
-    console.log(cardName)
-
     robot.http(UrlMap.gathererFind + urlParams)
       .header('Accept', 'application/json')
       .get()(function(err, res, body){
