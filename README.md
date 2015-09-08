@@ -27,6 +27,23 @@ examplebot gatherer find oracle=haste, color=red ...
 
 Either way will return the image of the card, unless the data returned does not contain an image. Then it will return the rules text of the card. If an exact match is not found, it will display a list of matches. If no cards are found it will output an error.
 
+### Possible Search Parameters
+
+Name |	Type |	Description
+---- | ----- | ------------
+color      |string| Select cards of the chosen color
+format       |string| Only show cards allowed in a specific format. Legal values are vintage, legacy, modern, standard, and commander
+multicolor   |bool| Only show cards that are multicolored. Legal values are true and false
+multiverseid |string| Select cards of that have at least one edition with the given Multiverse ID
+name       |string| A fuzzy match on a card's name
+oracle       |string| A fuzzy match on a card's Oracle rules text
+rarity       |string| Select cards printed at this rarity. Options are common, uncommon, rare and mythic
+set          |string| A three letter identifier for a Magic set
+status       |string| Only show cards with the given status. Legal values are legal, banned or restricted
+subtype      |string| Any valid card subtype. Possible values include zombie and tribal.
+supertype  |string| Any valid card supertype, such as legendary
+type	     |string|	Any valid card type. Possible values include enchantment and
+
 ## Getting a random card
 
 Simply type:
