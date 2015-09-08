@@ -18,10 +18,10 @@ or you can search by a series of parameters, like so:
 
 ```
 Format:
-[bot] gatherer find [search param1]=[search value1] [search param2]=[search value2] ...
+[bot] gatherer find [search param1]=[search value1], [search param2]=[search value2] ...
 
 Example:
-examplebot gatherer find name=shatter color=red ...
+examplebot gatherer find oracle=haste, color=red ...
 
 ```
 
@@ -35,7 +35,7 @@ Simply type:
 [bot] gatherer random
 ```
 
-It will return the image of the card, unless the data returned does not contain an image. Then it will return the rules text of the card.
+It will return the image of the card, unless the data returned does not contain an image. Then it will return the rules text of the card. If an error occurs it will output the cause.
 
 ## Settle a dispute with clash!
 
@@ -52,6 +52,7 @@ examplebot gatherer clash @Matt
 ## Notes
 
 * All cards that are retrieved will also be printed with a link to Wizards of the Coast's gatherer web service.
+* The advanced find command requires that all search params be seperated by a comma. If they are not, it will output an error.
 
 ## Testing
 

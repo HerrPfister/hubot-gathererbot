@@ -1,19 +1,28 @@
+var map = require('lodash/collection/map');
 var find = require('lodash/collection/find');
 var isEmpty = require('lodash/lang/isEmpty');
 
 var consts = require('../../static/consts');
+
 var UrlMap = consts.urlMap;
 var ErrorMessageMap = consts.errorMessageMap;
+var ResponseErrorCodes = consts.responseErrorCodes;
 
 function hasMultipleParams(userInput) {
   return (userInput.indexOf('=') > -1);
 }
 
 module.exports = {
+  hasErrorCode: function(statusCode) {
+    return find(ResponseErrorCodes, function(code) { return code === statusCode; })
+  },
+
   parseUrlParams: function(userInput) {
     if (hasMultipleParams(userInput)) {
-      var urlParams = userInput.split(' ');
-      return urlParams.join('&');
+      var params = userInput.split(',');
+      var trimmedParams = map(params, function(param) { return param.trim(); });
+
+      return trimmedParams.join('&');
     } else {
       return 'name=' + userInput;
     }
@@ -22,17 +31,9 @@ module.exports = {
   getCardName: function(userInput) {
     if (!hasMultipleParams(userInput)) {
       return userInput;
+    } else {
+      return undefined;
     }
-
-    var params = userInput.split(/[ =]/gi);
-
-    for (var i = 0; i < params.length; i++) {
-      if (params[i] === 'name') {
-        return params[i+1];
-      }
-    }
-
-    return undefined;
   },
 
   getRandomMultiverseId: function() {

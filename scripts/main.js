@@ -82,10 +82,10 @@ module.exports = function (robot) {
     robot.http(UrlMap.gathererFind + urlParams)
       .header('Accept', 'application/json')
       .get()(function(err, res, body){
-        if (!cardName) {
-          GathererFind.parseCommandError(robo, err);
-        } else if (err) {
+        if (err) {
           GathererFind.parseError(robo, err);
+        } else if (utils.hasErrorCode(res.statusCode)) {
+          GathererFind.parseCommandError(robo, err);
         } else {
           GathererFind.parseResponse(robo, body, cardName);
         }

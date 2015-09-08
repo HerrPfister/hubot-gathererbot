@@ -10,7 +10,7 @@ module.exports = {
   parseResponse: function(robo, body, cardName) {
     var cards = JSON.parse(body);
 
-    var card = (isEmpty(cards)) ? undefined : find(cards, function(card){
+    var card = (isEmpty(cards) || !cardName) ? undefined : find(cards, function(card){
       return cardName.toLowerCase() === card.name.toLowerCase()
     });
 
