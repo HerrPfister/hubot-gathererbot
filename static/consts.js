@@ -5,7 +5,8 @@ module.exports = {
   "urlMap": {
     "gathererFind": "https://api.deckbrew.com/mtg/cards?",
     "multiverseid": "https://api.deckbrew.com/mtg/cards?multiverseid=",
-    "gatherer": "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid="
+    "gatherer": "http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=",
+    "randomMultiverseId": "http://gatherer.wizards.com/Pages/Card/Details.aspx?action=random"
   },
   "errorMessageMap" : {
     "default": "There was an issue with your request. Please try again.",

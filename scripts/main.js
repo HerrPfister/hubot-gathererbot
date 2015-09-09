@@ -36,23 +36,43 @@ module.exports = function (robot) {
       card: {}
     };
 
-    // TODO: Find if there is a better way of getting two random cards from
-    //       the service, because this is not the prettiest.
-    robot.http(UrlMap.multiverseid + utils.getRandomMultiverseId())
+    robot.http(UrlMap.randomMultiverseId)
+      .header('Accept', 'application/json')
       .get()(function(err, res, body){
         if (err) {
           GathererClash.parseError(robo, err);
         } else {
-          challenger.card = JSON.parse(body);
+          var multiverseid = utils.getMultiverseId(res.headers);
 
-          robot.http(UrlMap.multiverseid + utils.getRandomMultiverseId())
+          robot.http(UrlMap.multiverseid + multiverseid)
+            .header('Accept', 'application/json')
             .get()(function(err, res, body){
               if (err) {
                 GathererClash.parseError(robo, err);
               } else {
-                challenged.card = JSON.parse(body);
+                challenger.card = JSON.parse(body);
 
-                GathererClash.resolveClash(robo, challenger, challenged);
+                robot.http(UrlMap.randomMultiverseId)
+                  .header('Accept', 'application/json')
+                  .get()(function(err, res, body){
+                    if (err) {
+                      GathererClash.parseError(robo, err);
+                    } else {
+                      var multiverseid = utils.getMultiverseId(res.headers);
+
+                      robot.http(UrlMap.multiverseid + multiverseid)
+                        .header('Accept', 'application/json')
+                        .get()(function(err, res, body){
+                          if (err) {
+                            GathererClash.parseError(robo, err);
+                          } else {
+                            challenged.card = JSON.parse(body);
+
+                            GathererClash.resolveClash(robo, challenger, challenged);
+                          }
+                        });
+                    }
+                  });
               }
             });
         }
@@ -60,15 +80,23 @@ module.exports = function (robot) {
   });
 
   robot.respond(/gatherer\s+random/i, function(robo){
-    var randomMultiverseId = utils.getRandomMultiverseId();
-
-    robot.http(UrlMap.multiverseid + randomMultiverseId)
+    robot.http(UrlMap.randomMultiverseId)
       .header('Accept', 'application/json')
       .get()(function(err, res, body){
         if (err) {
           GathererRandom.parseError(robo, err);
         } else {
-          GathererRandom.parseResponse(robo, body);
+          var multiverseid = utils.getMultiverseId(res.headers);
+
+          robot.http(UrlMap.multiverseid + multiverseid)
+            .header('Accept', 'application/json')
+            .get()(function(err, res, body){
+              if (err) {
+                GathererRandom.parseError(robo, err);
+              } else {
+                GathererRandom.parseResponse(robo, body);
+              }
+            });
         }
       });
   });

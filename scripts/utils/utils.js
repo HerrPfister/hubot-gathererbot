@@ -17,6 +17,11 @@ module.exports = {
     return find(ResponseErrorCodes, function(code) { return code === statusCode; })
   },
 
+  getMultiverseId: function(headers) {
+    var location = headers.location;
+    return location.split('=')[1];
+  },
+
   parseUrlParams: function(userInput) {
     if (hasMultipleParams(userInput)) {
       var params = userInput.split(',');
