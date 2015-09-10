@@ -20,9 +20,5 @@ module.exports = {
     } else {
       robo.send(MessageMap.clashWinner(challenged.name));
     }
-  },
-
-  parseError: function(robo, error) {
-    robo.send(ErrorMessageMap.default);
   }
 };

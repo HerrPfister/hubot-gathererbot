@@ -4,48 +4,37 @@ var isEmpty = require('lodash/lang/isEmpty');
 
 var consts = require('../../static/consts');
 
-var UrlMap = consts.urlMap;
-var ErrorMessageMap = consts.errorMessageMap;
-var ResponseErrorCodes = consts.responseErrorCodes;
-
-function hasMultipleParams(userInput) {
-  return (userInput.indexOf('=') > -1);
-}
+var urlMap = consts.urlMap;
+var errorMessageMap = consts.errorMessageMap;
+var responseErrorCodes = consts.responseErrorCodes;
 
 module.exports = {
   hasErrorCode: function(statusCode) {
-    return find(ResponseErrorCodes, function(code) { return code === statusCode; })
-  },
-
-  getMultiverseId: function(headers) {
-    var location = headers.location;
-    return location.split('=')[1];
+    return find(responseErrorCodes, function(code) { return code === statusCode; })
   },
 
   parseUrlParams: function(userInput) {
-    if (hasMultipleParams(userInput)) {
+    if (userInput.indexOf('=') === -1) {
+      return 'name=' + userInput;
+    } else {
       var params = userInput.split(',');
       var trimmedParams = map(params, function(param) { return param.trim(); });
 
       return trimmedParams.join('&');
-    } else {
-      return 'name=' + userInput;
     }
   },
 
   getCardName: function(userInput) {
-    if (!hasMultipleParams(userInput)) {
+    var nameRegEx = /.*[^=].*/i;
+    var nameParamRegEx = /name=(\w+)/i;
+
+    if (nameParamRegEx.test(userInput)) {
+      return nameParamRegEx.exec(userInput)[1];
+    } else if (nameRegEx.test(userInput)) {
       return userInput;
     } else {
       return undefined;
     }
-  },
-
-  getRandomMultiverseId: function() {
-    // NOTE: We are using a seed that may change over time.
-    //       We need a more dynamic way of getting the max multiverseid.
-    //       This will generate an id between 1 and 4980.
-    return Math.floor(Math.random() * (consts.verseIDSeed - 1) + 1);
   },
 
   getCardDetails: function(card) {
@@ -57,12 +46,12 @@ module.exports = {
       return parseInt(edition.multiverse_id) > 0;
     });
 
-    var multiverseid = cardImage = gathererText = '';
+    var multiverseId = cardImage = gathererText = '';
 
     if (cardEdition) {
       cardImage = cardEdition.image_url;
-      multiverseid = cardEdition.multiverse_id;
-      gathererText = "View in Gatherer: " + UrlMap.gatherer + multiverseid;
+      multiverseId = cardEdition.multiverse_id;
+      gathererText = "View in Gatherer: " + urlMap.gatherer + multiverseId;
     }
 
     return {
@@ -82,7 +71,7 @@ module.exports = {
     // is going on with the data returned by the service. Otherwise,
     // display all the relevant data.
     if (!cardDetails) {
-      res.send(ErrorMessageMap.cardDetail);
+      res.send(errorMessageMap.cardDetail);
       return;
     }
 
