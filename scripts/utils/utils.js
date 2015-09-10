@@ -1,3 +1,4 @@
+var Q = require('q');
 var map = require('lodash/collection/map');
 var find = require('lodash/collection/find');
 var isEmpty = require('lodash/lang/isEmpty');
@@ -8,44 +9,69 @@ var UrlMap = consts.urlMap;
 var ErrorMessageMap = consts.errorMessageMap;
 var ResponseErrorCodes = consts.responseErrorCodes;
 
-function hasMultipleParams(userInput) {
-  return (userInput.indexOf('=') > -1);
-}
-
 module.exports = {
   hasErrorCode: function(statusCode) {
     return find(ResponseErrorCodes, function(code) { return code === statusCode; })
   },
 
-  getMultiverseId: function(headers) {
-    var location = headers.location;
-    return location.split('=')[1];
+  getRandomMultiverseId: function (robot) {
+    var that = this;
+    var deferred = Q.defer();
+
+    robot.http(UrlMap.gathererRandom)
+      .header('Accept', 'application/json')
+      .get()(function(err, res, body){
+        if (err) {
+          deferred.reject(err);
+        } else {
+          var location = res.headers.location;
+          var multiverseid = location.split('=')[1];
+
+          deferred.resolve(multiverseid);
+        }
+      });
+
+    return deferred.promise;
+  },
+
+  getRandomCard: function (robot, multiverseid) {
+    var deferred = Q.defer();
+
+    robot.http(UrlMap.deckBrewMultiverseId + multiverseid)
+      .header('Accept', 'application/json')
+      .get()(function(err, res, body){
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve(JSON.parse(body));
+        }
+      });
+
+    return deferred.promise;
   },
 
   parseUrlParams: function(userInput) {
-    if (hasMultipleParams(userInput)) {
+    if (userInput.indexOf('=') === -1) {
+      return 'name=' + userInput;
+    } else {
       var params = userInput.split(',');
       var trimmedParams = map(params, function(param) { return param.trim(); });
 
       return trimmedParams.join('&');
-    } else {
-      return 'name=' + userInput;
     }
   },
 
   getCardName: function(userInput) {
-    if (!hasMultipleParams(userInput)) {
+    var nameRegEx = /.*[^=].*/i;
+    var nameParamRegEx = /name=(\w+)/i;
+
+    if (nameParamRegEx.test(userInput)) {
+      return nameParamRegEx.exec(userInput)[1];
+    } else if (nameRegEx.test(userInput)) {
       return userInput;
     } else {
       return undefined;
     }
-  },
-
-  getRandomMultiverseId: function() {
-    // NOTE: We are using a seed that may change over time.
-    //       We need a more dynamic way of getting the max multiverseid.
-    //       This will generate an id between 1 and 4980.
-    return Math.floor(Math.random() * (consts.verseIDSeed - 1) + 1);
   },
 
   getCardDetails: function(card) {

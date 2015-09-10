@@ -39,11 +39,11 @@ module.exports = {
     }
   },
 
-  parseCommandError: function(robo) {
+  parseCommandError: function(robo, err) {
     robo.send(ErrorMessageMap.findCommandError);
   },
 
-  parseError: function(robo, error) {
-    robo.send(ErrorMessageMap.default);
+  parseServerError: function(robo, err) {
+    robo.send(ErrorMessageMap.default)
   }
 };
