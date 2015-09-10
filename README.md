@@ -27,7 +27,7 @@ examplebot gatherer find oracle=haste, color=red ...
 
 Either way will return the image of the card, unless the data returned does not contain an image. Then it will return the rules text of the card. If an exact match is not found, it will display a list of matches. If no cards are found it will output an error.
 
-### Possible Search Parameters
+#### Possible Search Parameters
 
 Name |	Type |	Description
 ---- | ----- | ------------
@@ -65,11 +65,12 @@ Format:
 Example:
 examplebot gatherer clash @Matt
 ```
+It will output the cards drawn, and then determine who the winner is. In the case of a tie, try it again!
 
 ## Notes
 
 * All cards that are retrieved will also be printed with a link to Wizards of the Coast's gatherer web service.
-* The advanced find command requires that all search params be seperated by a comma. If they are not, it will output an error.
+* The advanced find command requires that all search params be separated by a comma. If they are not, it will output an error.
 
 ## Testing
 
