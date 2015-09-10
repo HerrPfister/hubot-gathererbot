@@ -1,53 +1,16 @@
-var Q = require('q');
 var map = require('lodash/collection/map');
 var find = require('lodash/collection/find');
 var isEmpty = require('lodash/lang/isEmpty');
 
 var consts = require('../../static/consts');
 
-var UrlMap = consts.urlMap;
-var ErrorMessageMap = consts.errorMessageMap;
-var ResponseErrorCodes = consts.responseErrorCodes;
+var urlMap = consts.urlMap;
+var errorMessageMap = consts.errorMessageMap;
+var responseErrorCodes = consts.responseErrorCodes;
 
 module.exports = {
   hasErrorCode: function(statusCode) {
-    return find(ResponseErrorCodes, function(code) { return code === statusCode; })
-  },
-
-  getRandomMultiverseId: function (robot) {
-    var that = this;
-    var deferred = Q.defer();
-
-    robot.http(UrlMap.gathererRandom)
-      .header('Accept', 'application/json')
-      .get()(function(err, res, body){
-        if (err) {
-          deferred.reject(err);
-        } else {
-          var location = res.headers.location;
-          var multiverseid = location.split('=')[1];
-
-          deferred.resolve(multiverseid);
-        }
-      });
-
-    return deferred.promise;
-  },
-
-  getRandomCard: function (robot, multiverseid) {
-    var deferred = Q.defer();
-
-    robot.http(UrlMap.deckBrewMultiverseId + multiverseid)
-      .header('Accept', 'application/json')
-      .get()(function(err, res, body){
-        if (err) {
-          deferred.reject(err);
-        } else {
-          deferred.resolve(JSON.parse(body));
-        }
-      });
-
-    return deferred.promise;
+    return find(responseErrorCodes, function(code) { return code === statusCode; })
   },
 
   parseUrlParams: function(userInput) {
@@ -83,12 +46,12 @@ module.exports = {
       return parseInt(edition.multiverse_id) > 0;
     });
 
-    var multiverseid = cardImage = gathererText = '';
+    var multiverseId = cardImage = gathererText = '';
 
     if (cardEdition) {
       cardImage = cardEdition.image_url;
-      multiverseid = cardEdition.multiverse_id;
-      gathererText = "View in Gatherer: " + UrlMap.gatherer + multiverseid;
+      multiverseId = cardEdition.multiverse_id;
+      gathererText = "View in Gatherer: " + urlMap.gatherer + multiverseId;
     }
 
     return {
@@ -108,7 +71,7 @@ module.exports = {
     // is going on with the data returned by the service. Otherwise,
     // display all the relevant data.
     if (!cardDetails) {
-      res.send(ErrorMessageMap.cardDetail);
+      res.send(errorMessageMap.cardDetail);
       return;
     }
 
