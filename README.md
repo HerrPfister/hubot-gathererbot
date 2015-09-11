@@ -4,7 +4,7 @@ A simple hubot that queries the [deckbrew](https://deckbrew.com/api/) service fo
 
 ## Searching for cards
 
-**You can either search by the cards name, like so:**
+**You can search by just the cards name, like so:**
 
 ```
 Format:
