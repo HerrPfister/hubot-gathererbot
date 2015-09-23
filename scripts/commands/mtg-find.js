@@ -50,6 +50,6 @@ module.exports = {
     },
 
     parseServerError: function(robo, err) {
-        robo.send(ErrorMessageMap.default)
+        robo.send(ErrorMessageMap.defaultError)
     }
 };

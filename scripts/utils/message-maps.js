@@ -1,8 +1,8 @@
 module.exports = {
     errorMessageMap : {
-        cardDetail: 'There was an issue retrieving the cards\'s details. Please try again.',
-        default: 'There was an issue with your request. Please try again.',
-        findCommandError: 'Invalid parameters. Please make sure that parameters are seperated by a comma.',
+        cardDetailError: 'There was an issue retrieving the cards\'s details. Please try again.',
+        defaultError: 'There was an issue with your request. Please try again.',
+        findCommandError: 'Invalid parameters. Please make sure that parameters are separated by a comma.',
         cardNotFound: function(cardName) {
           return 'We could not find the card ' + cardName + '. Please try again.';
         }
@@ -23,14 +23,16 @@ module.exports = {
           return 'Displaying ' + sampleSize + ' out of ' + poolSize + ' cards:';
         },
         cardDetails: function (cardDetails) {
-            return (
-                cardDetails.name + '\n' +
-                cardDetails.text + '\n' +
-                cardDetails.cost + '\n' +
-                cardDetails.types + '\n' +
-                cardDetails.subtypes + '\n' +
+            var details = [
+                cardDetails.name,
+                cardDetails.text,
+                cardDetails.cost,
+                cardDetails.types,
+                cardDetails.subtypes,
                 cardDetails.attributes
-            );
+            ];
+
+            return details.join('\n')
         }
     }
 };

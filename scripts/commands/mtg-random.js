@@ -11,7 +11,7 @@ module.exports = {
             cardDetails = utils.getCardDetails(card[0]);
             utils.sendDetails(robo, cardDetails);
         } else {
-            robo.send(ErrorMessageMap.default);
+            robo.send(ErrorMessageMap.defaultError);
         }
     }
 }

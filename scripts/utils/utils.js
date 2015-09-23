@@ -88,7 +88,7 @@ module.exports = {
         // is going on with the data returned by the service. Otherwise,
         // display all the relevant data.
         if (!cardDetails) {
-            res.send(errorMessageMap.cardDetail);
+            res.send(errorMessageMap.cardDetailError);
             return;
         }
 
