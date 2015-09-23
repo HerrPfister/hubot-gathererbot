@@ -1,4 +1,4 @@
-var MessageMap = require('../utils/message-maps').messageMap;
+var messageMap = require('../utils/message-maps').messageMap;
 
 module.exports = {
     resolveClash: function(robo, challenger, challenged) {
@@ -8,18 +8,18 @@ module.exports = {
             challengerCardCMC = parseInt(challengerCard.cmc),
             challengedCardCMC = parseInt(challengedCard.cmc),
 
-            defaultMessage = MessageMap.clashDefault(challenger.name, challenged.name),
-            challengerCardMessage = MessageMap.clashCardDraw(challenger.name, challengerCard),
-            challengedCardMessage = MessageMap.clashCardDraw(challenged.name, challengedCard);
+            defaultMessage = messageMap.clashDefault(challenger.name, challenged.name),
+            challengerCardMessage = messageMap.clashCardDraw(challenger.name, challengerCard),
+            challengedCardMessage = messageMap.clashCardDraw(challenged.name, challengedCard);
 
         robo.send(defaultMessage + '\n' + challengerCardMessage + '\n' + challengedCardMessage);
 
         if (challengerCardCMC === challengedCardCMC) {
-            robo.send(MessageMap.clashDraw);
+            robo.send(messageMap.clashDraw);
         } else if (challengerCardCMC > challengedCardCMC){
-            robo.send(MessageMap.clashWinner(challenger.name));
+            robo.send(messageMap.clashWinner(challenger.name));
         } else {
-            robo.send(MessageMap.clashWinner(challenged.name));
+            robo.send(messageMap.clashWinner(challenged.name));
         }
     }
 };

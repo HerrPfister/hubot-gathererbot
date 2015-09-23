@@ -16,11 +16,11 @@
 
 
 var api = require('./utils/api'),
-    MtgFind = require('./commands/mtg-find'),
-    MtgClash = require('./commands/mtg-clash'),
-    MtgRandom = require('./commands/mtg-random'),
+    mtgFind = require('./commands/mtg-find'),
+    mtgClash = require('./commands/mtg-clash'),
+    mtgRandom = require('./commands/mtg-random'),
     utils = require('./utils/utils'),
-    UrlMap = require('../static/consts').urlMap,
+    urlMap = require('../static/consts').urlMap,
 
     Q = require('q');
 
@@ -33,7 +33,7 @@ module.exports = function (robot) {
                         var challenger = { name: robo.message.user.name, card: cards[0] };
                         var challenged = { name: robo.match[1], card: cards[1] };
 
-                        MtgClash.resolveClash(robo, challenger, challenged);
+                        mtgClash.resolveClash(robo, challenger, challenged);
                     });
             });
     });
@@ -44,7 +44,7 @@ module.exports = function (robot) {
                 return api.getRandomCard(robot, multiverseId);
             })
             .done(function(card){
-                MtgRandom.parseResponse(robo, card);
+                mtgRandom.parseResponse(robo, card);
             });
     });
 
@@ -52,15 +52,15 @@ module.exports = function (robot) {
         var cardName = utils.getCardName(robo.match[1]),
             urlParams = utils.parseUrlParams(robo.match[1]);
 
-        robot.http(UrlMap.deckBrewBase + urlParams)
+        robot.http(urlMap.deckBrewBase + urlParams)
             .header('Accept', 'application/json')
             .get()(function(err, res, body){
                 if (err) {
-                    MtgFind.parseServerError(robo, err);
+                    mtgFind.parseServerError(robo, err);
                 } else if (utils.hasErrorCode(res.statusCode)) {
-                    MtgFind.parseCommandError(robo, err);
+                    mtgFind.parseCommandError(robo, err);
                 } else {
-                    MtgFind.parseResponse(robo, body, cardName);
+                    mtgFind.parseResponse(robo, body, cardName);
                 }
             });
     });
