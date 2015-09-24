@@ -14,5 +14,5 @@ module.exports = {
             robo.send(errorMessageMap.defaultError);
         }
     }
-}
+};
 

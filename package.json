@@ -7,12 +7,25 @@
     "shell": "hubot --adapter shell --disable-httpd",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "eslintConfig": {
+    "rules": {
+      "array-bracket-spacing": [2, "always"],
+      "brace-style": 2,
+      "eol-last": 2,
+      "no-mixed-spaces-and-tabs": 2,
+      "quotes": [2, "single"],
+      "semi": 2,
+      "spaced-comment": [2, "always"],
+      "wrap-regex": 2
+    }
+  },
   "keywords": [
     "hubot",
     "hubot-scripts"
   ],
   "devDependencies": {
-    "coffee-script": "^1.10.0",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0",
     "hubot": "^2.16.0"
   },
   "dependencies": {

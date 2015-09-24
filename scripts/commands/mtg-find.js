@@ -18,7 +18,7 @@ module.exports = {
             cardSampleText,
             cards = JSON.parse(body),
             card = (isEmpty(cards) || !cardName) ? undefined : find(cards, function(card){
-                return cardName.toLowerCase() === card.name.toLowerCase()
+                return cardName.toLowerCase() === card.name.toLowerCase();
             });
 
         // If find() comes back with a match that means it found the exact card the user was
@@ -50,6 +50,6 @@ module.exports = {
     },
 
     parseServerError: function(robo, err) {
-        robo.send(errorMessageMap.defaultError)
+        robo.send(errorMessageMap.defaultError);
     }
 };

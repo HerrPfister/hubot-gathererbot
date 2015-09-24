@@ -32,7 +32,7 @@ module.exports = {
                 cardDetails.attributes
             ];
 
-            return details.join('\n')
+            return details.join('\n');
         }
     }
 };

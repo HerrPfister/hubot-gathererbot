@@ -11,7 +11,9 @@ var messageMap = require('./message-maps'),
 
 module.exports = {
     hasErrorCode: function(statusCode) {
-        return find(responseErrorCodes, function(code) { return code === statusCode; });
+        return find(responseErrorCodes, function(code) {
+            return code === statusCode;
+        });
     },
 
     parseUrlParams: function(userInput) {
@@ -65,7 +67,7 @@ module.exports = {
         if (cardEdition) {
             cardImage = cardEdition.image_url;
             multiverseId = cardEdition.multiverse_id;
-            gathererText = "View in Gatherer: " + urlMap.gatherer + multiverseId;
+            gathererText = 'View in Gatherer: ' + urlMap.gatherer + multiverseId;
         }
 
         return {
@@ -76,7 +78,7 @@ module.exports = {
           cardImage: cardImage,
           subtypes: card.subtypes,
           gathererText: gathererText,
-          attributes: (card.power) ? card.power + "/" + card.toughness : ''
+          attributes: (card.power) ? card.power + '/' + card.toughness : ''
         };
     },
 
