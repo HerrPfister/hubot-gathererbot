@@ -1,5 +1,6 @@
 
-var messageMap = require('./message-maps'),
+var consts = require('../../static/consts'),
+    messageMap = require('./message-maps'),
     urlMap = require('../../static/consts').urlMap,
 
     find = require('lodash/collection/find'),
@@ -12,6 +13,36 @@ var messageMap = require('./message-maps'),
 module.exports = {
     hasErrorCode: function(statusCode) {
         return find(responseErrorCodes, function(code) { return code === statusCode; });
+    },
+
+    parseGathererUrlParams: function(urlParams) {
+        var params = urlParams.split('&'),
+            keyValuePair,
+            parsedKey,
+            parsedValue,
+            mappedValue,
+            mappedKey,
+            mappedParams;
+
+        mappedParams = map(params, function (param) {
+            keyValuePair = param.split('=');
+            parsedKey = keyValuePair[0];
+            parsedValue = keyValuePair[1];
+
+            mappedKey = consts.gathererUrlKeyMap[parsedKey];
+
+            if (parsedKey === 'color') {
+                mappedValue = consts.gathererColorMap[parsedValue];
+            } else if (parsedKey === 'rarity') {
+                mappedValue = consts.gathererRarityMap[parsedValue];
+            } else {
+                mappedValue = parsedValue;
+            }
+
+            return mappedKey + '[' + mappedValue + ']';
+        });
+
+        return mappedParams.join('&');
     },
 
     parseUrlParams: function(userInput) {

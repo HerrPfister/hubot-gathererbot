@@ -60,7 +60,7 @@ module.exports = function (robot) {
                 } else if (utils.hasErrorCode(res.statusCode)) {
                     mtgFind.parseCommandError(robo, err);
                 } else {
-                    mtgFind.parseResponse(robo, body, cardName);
+                    mtgFind.parseResponse(robo, body, cardName, urlParams);
                 }
             });
     });
