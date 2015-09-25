@@ -16,15 +16,14 @@ module.exports = {
     },
 
     parseGathererUrlParams: function(urlParams) {
-        var params = urlParams.split('&'),
-            keyValuePair,
+        var keyValuePair,
             parsedKey,
             parsedValue,
             mappedValue,
             mappedKey,
             mappedParams;
 
-        mappedParams = map(params, function (param) {
+        mappedParams = urlParams.split('&').map(function (param) {
             keyValuePair = param.split('=');
             parsedKey = keyValuePair[0];
             parsedValue = keyValuePair[1];
