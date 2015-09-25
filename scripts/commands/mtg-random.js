@@ -1,4 +1,4 @@
-var errorMessageMap = require('../utils/message-maps').errorMessageMap,
+var consts = require('../../static/consts'),
     utils = require('../utils/utils'),
 
     isEmpty = require('lodash/lang/isEmpty');
@@ -11,7 +11,7 @@ module.exports = {
             cardDetails = utils.getCardDetails(card[0]);
             utils.sendDetails(robo, cardDetails);
         } else {
-            robo.send(errorMessageMap.defaultError);
+            robo.send(consts.defaultError);
         }
     }
 };

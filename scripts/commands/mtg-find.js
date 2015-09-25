@@ -1,13 +1,20 @@
 var consts = require('../../static/consts'),
-    messageMaps = require('../utils/message-maps'),
     utils = require('../utils/utils'),
 
     find = require('lodash/collection/find'),
     isEmpty = require('lodash/lang/isEmpty'),
     pluck = require('lodash/collection/pluck'),
 
-    messageMap = messageMaps.messageMap,
-    errorMessageMap = messageMaps.errorMessageMap;
+    CARD_LIMIT = 5,
+    FIND_CMD_ERROR = 'Invalid parameters. Please make sure that parameters are separated by a comma.';
+
+function getCardPoolSizeString(sampleSize, poolSize) {
+    return 'Displaying ' + sampleSize + ' out of ' + poolSize + ' cards:';
+}
+
+function getCardNotFoundError(cardName) {
+    return 'We could not find the card ' + cardName + '. Please try again.';
+}
 
 module.exports = {
     parseResponse: function(robo, body, cardName) {
@@ -30,10 +37,10 @@ module.exports = {
         } else if (cards.length > 0) {
             // Grab the first X amount of cards, which is determined from the constant cardLimit.
             // Then print off the name of each card.
-            cardSample = cards.slice(0, consts.cardLimit);
+            cardSample = cards.slice(0, CARD_LIMIT);
             cardSampleNames = pluck(cardSample, 'name');
             cardSampleText = cardSampleNames.join('\n');
-            cardPoolSize = messageMap.cardPoolSize(cardSample.length, cards.length);
+            cardPoolSize = getCardPoolSizeString(cardSample.length, cards.length);
 
             // TODO: Build gatherer url for query. See next line ...
             // http://gatherer.wizards.com/Pages/Search/Default.aspx?text=+[haste]&color=|[R]
@@ -41,15 +48,15 @@ module.exports = {
             robo.send(cardPoolSize + '\n' + cardSampleText);
 
         } else {
-            robo.send(errorMessageMap.cardNotFound(cardName));
+            robo.send(getCardNotFoundError(cardName));
         }
     },
 
     parseCommandError: function(robo, err) {
-        robo.send(errorMessageMap.findCommandError);
+        robo.send(FIND_CMD_ERROR);
     },
 
     parseServerError: function(robo, err) {
-        robo.send(errorMessageMap.defaultError);
+        robo.send(consts.defaultError);
     }
 };

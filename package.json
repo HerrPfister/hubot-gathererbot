@@ -24,6 +24,7 @@
     "hubot-scripts"
   ],
   "devDependencies": {
+    "coffee-script": "^1.10.0",
     "gulp": "^3.9.0",
     "gulp-eslint": "^1.0.0",
     "hubot": "^2.16.0"

@@ -1,13 +1,27 @@
 
-var messageMap = require('./message-maps'),
-    urlMap = require('../../static/consts').urlMap,
+var consts = require('../../static/consts'),
 
     find = require('lodash/collection/find'),
     isEmpty = require('lodash/lang/isEmpty'),
     map = require('lodash/collection/map'),
 
-    errorMessageMap = messageMap.errorMessageMap,
-    responseErrorCodes = messageMap.responseErrorCodes;
+    responseErrorCodes = consts.responseErrorCodes,
+    urlMap = consts.urlMap,
+
+    DETAILS_ERROR = 'There was an issue retrieving the cards\'s details. Please try again.';
+
+function getCardDetailsString(cardDetails) {
+    var details = [
+        cardDetails.name,
+        cardDetails.text,
+        cardDetails.cost,
+        cardDetails.types,
+        cardDetails.subtypes,
+        cardDetails.attributes
+    ];
+
+    return details.join('\n');
+}
 
 module.exports = {
     hasErrorCode: function(statusCode) {
@@ -90,13 +104,13 @@ module.exports = {
         // is going on with the data returned by the service. Otherwise,
         // display all the relevant data.
         if (!cardDetails) {
-            res.send(errorMessageMap.cardDetailError);
+            res.send(DETAILS_ERROR);
             return;
         }
 
         gathererText = cardDetails.gathererText;
         detailsMessage = (cardDetails.cardImage) ?
-            cardDetails.cardImage : messageMap.cardDetails(cardDetails);
+            cardDetails.cardImage : getCardDetailsString(cardDetails);
 
         res.send(detailsMessage + '\n' + gathererText);
     }

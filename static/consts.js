@@ -1,5 +1,5 @@
 module.exports = {
-    cardLimit: 5,
+    defaultError: 'There was an issue with your request. Please try again.',
     responseErrorCodes: [
         400,
         500
