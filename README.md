@@ -8,10 +8,10 @@ A simple hubot that queries the [deckbrew](https://deckbrew.com/api/) service fo
 
 ```
 Format:
-[bot] gatherer find [card name]
+[bot] mtg find [card name]
 
 Example
-examplebot gatherer find shatter
+examplebot mtg find shatter
 ```
 
 **Sample output:**
@@ -25,10 +25,10 @@ View in Gatherer: http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverse
 
 ```
 Format:
-[bot] gatherer find [search param1]=[search value1], [search param2]=[search value2] ...
+[bot] mtg find [search param1]=[search value1], [search param2]=[search value2] ...
 
 Example:
-examplebot gatherer find oracle=intimidate, color=red ...
+examplebot mtg find oracle=intimidate, color=red ...
 
 ```
 **Sample output:**
@@ -64,7 +64,7 @@ type	     |string|	Any valid card type. Possible options include enchantment, in
 **Simply type:**
 
 ```
-[bot] gatherer random
+[bot] mtg random
 ```
 
 **Sample output:**
@@ -80,10 +80,10 @@ View in Gatherer: http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverse
 
 ```
 Format:
-[bot] gatherer clash [@handler]
+[bot] mtg clash [@handler]
 
 Example:
-examplebot gatherer clash @Matt
+examplebot mtg clash @Matt
 ```
 **Sample output with a winner:**
 
