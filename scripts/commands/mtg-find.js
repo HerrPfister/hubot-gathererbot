@@ -17,8 +17,11 @@ function getCardNotFoundError(cardName) {
 }
 
 module.exports = {
-    parseResponse: function(robo, body, cardName) {
+    parseResponse: function(robo, body, cardName, urlParams) {
         var cardDetails,
+            gathererBaseUrl,
+            gathererParams,
+            gathererUrl,
             cardPoolSize,
             cardSample,
             cardSampleNames,
@@ -42,10 +45,11 @@ module.exports = {
             cardSampleText = cardSampleNames.join('\n');
             cardPoolSize = getCardPoolSizeString(cardSample.length, cards.length);
 
-            // TODO: Build gatherer url for query. See next line ...
-            // http://gatherer.wizards.com/Pages/Search/Default.aspx?text=+[haste]&color=|[R]
+            gathererBaseUrl = consts.urlMap.gathererAdvanced;
+            gathererParams = utils.parseGathererUrlParams(urlParams);
+            gathererUrl = gathererBaseUrl + gathererParams;
 
-            robo.send(cardPoolSize + '\n' + cardSampleText);
+            robo.send(cardPoolSize + '\n' + cardSampleText + '\n' + gathererUrl);
 
         } else {
             robo.send(getCardNotFoundError(cardName));
