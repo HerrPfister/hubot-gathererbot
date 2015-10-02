@@ -47,7 +47,7 @@ module.exports = {
 
             gathererBaseUrl = consts.urlMap.gathererAdvanced;
             gathererParams = utils.parseGathererUrlParams(urlParams);
-            gathererUrl = gathererBaseUrl + gathererParams;
+            gathererUrl = 'View in Gatherer: ' + gathererBaseUrl + gathererParams;
 
             robo.send(cardPoolSize + '\n' + cardSampleText + '\n' + gathererUrl);
 
