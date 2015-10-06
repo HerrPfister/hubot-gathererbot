@@ -40,6 +40,7 @@ Akroan Line Breaker
 Bladetusk Boar
 Cyclops Tyrant
 Heirs of Stromkirk
+View in Gatherer: http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&text=+[intimidate]&color=+[r]
 ```
 
 #### Possible Search Parameters
