@@ -56,11 +56,11 @@ module.exports = {
         }
     },
 
-    parseCommandError: function(robo, err) {
+    parseCommandError: function(robo) {
         robo.send(FIND_CMD_ERROR);
     },
 
-    parseServerError: function(robo, err) {
+    parseServerError: function(robo) {
         robo.send(consts.defaultError);
     }
 };

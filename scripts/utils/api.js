@@ -3,12 +3,11 @@ var Q = require('q'),
 
 module.exports = {
     getRandomMultiverseId: function (robot) {
-        var that = this,
-            deferred = Q.defer();
+        var deferred = Q.defer();
 
         robot.http(urlMap.gathererRandom)
             .header('Accept', 'application/json')
-            .get()(function(err, res, body){
+            .get()(function(err, res){
                 var location,
                     multiverseId;
 

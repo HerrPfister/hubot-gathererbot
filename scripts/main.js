@@ -26,16 +26,28 @@ var api = require('./utils/api'),
 
 module.exports = function (robot) {
     robot.respond(/mtg\s+clash\s+(@\w+)/i, function(robo) {
-        Q.all([ api.getRandomMultiverseId(robot), api.getRandomMultiverseId(robot) ])
-            .done(function(multiverseIds) {
-                Q.all([ api.getRandomCard(robot, multiverseIds[0]), api.getRandomCard(robot, multiverseIds[1]) ])
-                    .done(function(cards) {
-                        var challenger = { name: robo.message.user.name, card: cards[0] };
-                        var challenged = { name: robo.match[1], card: cards[1] };
+        Q.all([
+            api.getRandomMultiverseId(robot),
+            api.getRandomMultiverseId(robot)
+        ])
+        .done(function(multiverseIds) {
+            Q.all([
+                api.getRandomCard(robot, multiverseIds[0]),
+                api.getRandomCard(robot, multiverseIds[1])
+            ])
+            .done(function(cards) {
+                var challenger = {
+                        name: robo.message.user.name,
+                        card: cards[0]
+                    },
+                    challenged = {
+                        name: robo.match[1],
+                        card: cards[1]
+                    };
 
-                        mtgClash.resolveClash(robo, challenger, challenged);
-                    });
+                mtgClash.resolveClash(robo, challenger, challenged);
             });
+        });
     });
 
     robot.respond(/mtg\s+random/i, function(robo) {
