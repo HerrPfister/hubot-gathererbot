@@ -1,14 +1,19 @@
 var consts = require('../../static/consts'),
-    utils = require('../utils/utils'),
+    cardUtils = require('../utils/card'),
 
-    find = require('lodash/collection/find'),
-    isEmpty = require('lodash/lang/isEmpty'),
-    pluck = require('lodash/collection/pluck'),
+    _ = require('lodash'),
 
-    CARD_LIMIT = 5,
-    FIND_CMD_ERROR = 'Invalid parameters. Please make sure that parameters are separated by a comma.';
+    CARD_LIMIT = 5;
 
-function getCardPoolSizeString(sampleSize, poolSize) {
+function parseServerError(robo) {
+    robo.send(consts.defaultError);
+}
+
+function parseCommandError(robo) {
+    robo.send('Invalid parameters. Please make sure that parameters are separated by a comma.');
+}
+
+function getCardPoolSizeString(poolSize) {
     return 'Displaying ' + sampleSize + ' out of ' + poolSize + ' cards:';
 }
 
@@ -16,51 +21,52 @@ function getCardNotFoundError(cardName) {
     return 'We could not find the card ' + cardName + '. Please try again.';
 }
 
-module.exports = {
-    parseResponse: function(robo, body, cardName, urlParams) {
-        var cardDetails,
-            gathererBaseUrl,
-            gathererParams,
-            gathererUrl,
-            cardPoolSize,
-            cardSample,
-            cardSampleNames,
-            cardSampleText,
-            cards = JSON.parse(body),
-            card = (isEmpty(cards) || !cardName) ? undefined : find(cards, function(card){
-                return cardName.toLowerCase() === card.name.toLowerCase();
-            });
+function createCardList(cards) {
+    var cardSample = cards.slice(0, CARD_LIMIT),
+        cardSampleNames = _.pluck(cardSample, 'name');
 
-        // If find() comes back with a match that means it found the exact card the user was
-        // looking for. Otherwise, that means the service has found more than one match.
-        if (card) {
-            cardDetails = utils.getCardDetails(card);
-            utils.sendDetails(robo, cardDetails);
+    return cardSampleNames.join('\n');
+}
 
-        } else if (cards.length > 0) {
-            // Grab the first X amount of cards, which is determined from the constant cardLimit.
-            // Then print off the name of each card.
-            cardSample = cards.slice(0, CARD_LIMIT);
-            cardSampleNames = pluck(cardSample, 'name');
-            cardSampleText = cardSampleNames.join('\n');
-            cardPoolSize = getCardPoolSizeString(cardSample.length, cards.length);
+function createGathererUrl(urlParams) {
+    var gathererBaseUrl = consts.urlMap.gathererAdvanced,
+        gathererParams = cardUtils.parseGathererUrlParams(urlParams);
 
-            gathererBaseUrl = consts.urlMap.gathererAdvanced;
-            gathererParams = utils.parseGathererUrlParams(urlParams);
-            gathererUrl = 'View in Gatherer: ' + gathererBaseUrl + gathererParams;
+    return 'View in Gatherer: ' + gathererBaseUrl + gathererParams;
+}
 
-            robo.send(cardPoolSize + '\n' + cardSampleText + '\n' + gathererUrl);
+function hasCards(cards, cardName) {
+    return cards.length && cardName;
+}
 
-        } else {
-            robo.send(getCardNotFoundError(cardName));
-        }
-    },
+function findCard(cards, cardName) {
+    return _.find(cards, function (card) {
+        return cardName.toLowerCase() === card.name.toLowerCase();
+    });
+}
 
-    parseCommandError: function(robo) {
-        robo.send(FIND_CMD_ERROR);
-    },
+function parseResponse(robo, body, cardName, urlParams) {
+    var cardDetails,
+        cards = JSON.parse(body);
 
-    parseServerError: function(robo) {
-        robo.send(consts.defaultError);
+    if (hasCards(cards, cardName)) {
+        cardDetails = cardUtils.getCardDetails(findCard(cards, cardName));
+        cardUtils.sendDetails(robo, cardDetails);
+
+    } else if (cards.length > 0) {
+        robo.send(
+            getCardPoolSizeString(cards.length) + '\n' +
+            createCardList(cards) + '\n' +
+            createGathererUrl(urlParams)
+        );
+
+    } else {
+        robo.send(getCardNotFoundError(cardName));
     }
+}
+
+module.exports = {
+    parseResponse: parseResponse,
+    parseCommandError: parseCommandError,
+    parseServerError: parseServerError
 };

@@ -1,17 +1,17 @@
 module.exports = {
     defaultError: 'There was an issue with your request. Please try again.',
     gathererColorMap: {
-        blue: 'u',
-        red: 'r',
-        green: 'g',
-        black: 'b',
-        white: 'w'
+        blue: 'U',
+        red: 'R',
+        green: 'G',
+        black: 'B',
+        white: 'W'
     },
     gathererRarityMap: {
-        common: 'c',
-        uncommon: 'u',
-        rare: 'r',
-        mythic: 'm'
+        common: 'C',
+        uncommon: 'U',
+        rare: 'R',
+        mythic: 'M'
     },
     gathererUrlKeyMap: {
         color: 'color=+',
@@ -27,8 +27,7 @@ module.exports = {
         500
     ],
     urlMap: {
-        deckBrewBase: 'https://api.deckbrew.com/mtg/cards?',
-        deckBrewMultiverseId: 'https://api.deckbrew.com/mtg/cards?multiverseid=',
+        deckBrewPrefix: 'https://api.deckbrew.com/mtg/cards?',
         gatherer: 'http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=',
         gathererAdvanced: 'http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&',
         gathererRandom: 'http://gatherer.wizards.com/Pages/Card/Details.aspx?action=random'

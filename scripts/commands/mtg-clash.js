@@ -12,26 +12,28 @@ function getClashDefaultString(challenger, opponent) {
     return challenger + ' challenges ' + opponent + ' to a mtg clash!';
 }
 
-module.exports = {
-    resolveClash: function(robo, challenger, challenged) {
-        var challengerCard = challenger.card[0],
-            challengedCard = challenged.card[0],
+function resolveClash(robo, challenger, challenged) {
+    var challengerCard = challenger.card[0],
+        challengedCard = challenged.card[0],
 
-            challengerCardCMC = parseInt(challengerCard.cmc),
-            challengedCardCMC = parseInt(challengedCard.cmc),
+        challengerCardCMC = parseInt(challengerCard.cmc),
+        challengedCardCMC = parseInt(challengedCard.cmc),
 
-            defaultMessage = getClashDefaultString(challenger.name, challenged.name),
-            challengerCardMessage = getClashCardDrawString(challenger.name, challengerCard),
-            challengedCardMessage = getClashCardDrawString(challenged.name, challengedCard);
+        defaultMessage = getClashDefaultString(challenger.name, challenged.name),
+        challengerCardMessage = getClashCardDrawString(challenger.name, challengerCard),
+        challengedCardMessage = getClashCardDrawString(challenged.name, challengedCard),
 
-        robo.send(defaultMessage + '\n' + challengerCardMessage + '\n' + challengedCardMessage);
+        clashMessage = defaultMessage + '\n' + challengerCardMessage + '\n' + challengedCardMessage;
 
-        if (challengerCardCMC === challengedCardCMC) {
-            robo.send(CLASH_DRAW);
-        } else if (challengerCardCMC > challengedCardCMC){
-            robo.send(getClashWinnerString(challenger.name));
-        } else {
-            robo.send(getClashWinnerString(challenged.name));
-        }
+    if (challengerCardCMC === challengedCardCMC) {
+        robo.send(clashMessage + '\n' + CLASH_DRAW);
+    } else if (challengerCardCMC > challengedCardCMC){
+        robo.send(clashMessage + '\n' + getClashWinnerString(challenger.name));
+    } else {
+        robo.send(clashMessage + '\n' + getClashWinnerString(challenged.name));
     }
+}
+
+module.exports = {
+    resolveClash: resolveClash
 };
