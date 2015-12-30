@@ -1,34 +1,13 @@
 module.exports = {
     defaultError: 'There was an issue with your request. Please try again.',
-    gathererColorMap: {
-        blue: 'u',
-        red: 'r',
-        green: 'g',
-        black: 'b',
-        white: 'w'
-    },
-    gathererRarityMap: {
-        common: 'c',
-        uncommon: 'u',
-        rare: 'r',
-        mythic: 'm'
-    },
-    gathererUrlKeyMap: {
-        color: 'color=+',
-        format: 'format=+',
-        oracle: 'text=+',
-        rarity: 'rarity=+',
-        set: 'set=+',
-        subtype: 'subtype=+',
-        type: 'type=+'
-    },
+    findError: 'We could not find the card(s) you were looking for. Please try again.',
+    findInvalidParamError: 'Invalid parameters. Please make sure that parameters are separated by a comma.',
     responseErrorCodes: [
         400,
         500
     ],
     urlMap: {
-        deckBrewBase: 'https://api.deckbrew.com/mtg/cards?',
-        deckBrewMultiverseId: 'https://api.deckbrew.com/mtg/cards?multiverseid=',
+        deckBrewPrefix: 'https://api.deckbrew.com/mtg/cards?',
         gatherer: 'http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=',
         gathererAdvanced: 'http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&',
         gathererRandom: 'http://gatherer.wizards.com/Pages/Card/Details.aspx?action=random'
