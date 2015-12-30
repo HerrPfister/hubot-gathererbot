@@ -1,27 +1,7 @@
 module.exports = {
     defaultError: 'There was an issue with your request. Please try again.',
-    gathererColorMap: {
-        blue: 'U',
-        red: 'R',
-        green: 'G',
-        black: 'B',
-        white: 'W'
-    },
-    gathererRarityMap: {
-        common: 'C',
-        uncommon: 'U',
-        rare: 'R',
-        mythic: 'M'
-    },
-    gathererUrlKeyMap: {
-        color: 'color=+',
-        format: 'format=+',
-        oracle: 'text=+',
-        rarity: 'rarity=+',
-        set: 'set=+',
-        subtype: 'subtype=+',
-        type: 'type=+'
-    },
+    findError: 'We could not find the card(s) you were looking for. Please try again.',
+    findInvalidParamError: 'Invalid parameters. Please make sure that parameters are separated by a comma.',
     responseErrorCodes: [
         400,
         500

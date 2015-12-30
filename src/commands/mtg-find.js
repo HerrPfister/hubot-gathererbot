@@ -1,24 +1,17 @@
 var consts = require('../../static/consts'),
     cardUtils = require('../utils/card'),
+    urlUtils = require('../utils/url'),
 
     _ = require('lodash'),
 
     CARD_LIMIT = 5;
 
-function parseServerError(robo) {
-    robo.send(consts.defaultError);
-}
-
 function parseCommandError(robo) {
-    robo.send('Invalid parameters. Please make sure that parameters are separated by a comma.');
+    robo.send(consts.findInvalidParamError);
 }
 
 function getCardPoolSizeString(poolSize) {
-    return 'Displaying ' + sampleSize + ' out of ' + poolSize + ' cards:';
-}
-
-function getCardNotFoundError(cardName) {
-    return 'We could not find the card ' + cardName + '. Please try again.';
+    return 'Displaying ' + CARD_LIMIT + ' out of ' + poolSize + ' cards:';
 }
 
 function createCardList(cards) {
@@ -30,13 +23,9 @@ function createCardList(cards) {
 
 function createGathererUrl(urlParams) {
     var gathererBaseUrl = consts.urlMap.gathererAdvanced,
-        gathererParams = cardUtils.parseGathererUrlParams(urlParams);
+        gathererParams = urlUtils.convertUrlParamsToGathererParams(urlParams);
 
     return 'View in Gatherer: ' + gathererBaseUrl + gathererParams;
-}
-
-function hasCards(cards, cardName) {
-    return cards.length && cardName;
 }
 
 function findCard(cards, cardName) {
@@ -49,24 +38,23 @@ function parseResponse(robo, body, cardName, urlParams) {
     var cardDetails,
         cards = JSON.parse(body);
 
-    if (hasCards(cards, cardName)) {
+    if (!cards.length) {
+        robo.send(consts.findError);
+
+    } else if (cardName) {
         cardDetails = cardUtils.getCardDetails(findCard(cards, cardName));
         cardUtils.sendDetails(robo, cardDetails);
 
-    } else if (cards.length > 0) {
+    } else {
         robo.send(
             getCardPoolSizeString(cards.length) + '\n' +
             createCardList(cards) + '\n' +
             createGathererUrl(urlParams)
         );
-
-    } else {
-        robo.send(getCardNotFoundError(cardName));
     }
 }
 
 module.exports = {
-    parseResponse: parseResponse,
     parseCommandError: parseCommandError,
-    parseServerError: parseServerError
+    parseResponse: parseResponse
 };

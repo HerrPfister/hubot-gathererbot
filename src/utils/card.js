@@ -1,4 +1,5 @@
-var _ = require('lodash');
+var _ = require('lodash'),
+    urlMap = require('../../static/consts').urlMap;
 
 function getCardDetailsString(cardDetails) {
     var details = [
@@ -13,20 +14,25 @@ function getCardDetailsString(cardDetails) {
     return details.join('\n');
 }
 
-function getGathererDetails(editions) {
+function getFirstEditionFrom(editions) {
     return _.find(editions, function (edition) {
         return parseInt(edition.multiverse_id) > 0;
     });
 }
 
 function getCardDetails(card) {
-    var cardEdition = getGathererDetails(card.editions)
+    var attributes = card.power ? card.power + '/' + card.toughness : undefined,
+
+        cardEdition = getFirstEditionFrom(card.editions),
+        cardImage = cardEdition ? cardEdition.image_url : undefined,
+        gathererText = cardEdition ? 'View in Gatherer: ' + urlMap.gatherer + cardEdition.multiverse_id : undefined;
+
 
     return {
-        attributes: card.power ? card.power + '/' + card.toughness : '',
-        cardImage: cardEdition ? cardEdition.image_url : undefined,
+        attributes: attributes,
+        cardImage: cardImage,
         cost: card.cost,
-        gathererText: cardEdition ? 'View in Gatherer: ' + urlMap.gatherer + cardEdition.multiverse_id : undefined,
+        gathererText: gathererText,
         name: card.name,
         subtypes: card.subtypes,
         text: card.text,
@@ -35,17 +41,18 @@ function getCardDetails(card) {
 }
 
 function getCardName(userInput) {
-    var nameRegEx = /.*[^=].*/i,
-        nameParamRegEx = /name=(\w+)/i;
+    var cardNameParamRegEx = /name=(\w+)/i,
+        paramListRegEx = /\w+=\w+/i,
 
-    if (nameParamRegEx.test(userInput)) {
-        return nameParamRegEx.exec(userInput)[1];
+        validNameQuery = cardNameParamRegEx.test(userInput),
+        invalidNameQuery = paramListRegEx.test(userInput) && !cardNameParamRegEx.test(userInput);
 
-    } else if (nameRegEx.test(userInput)) {
-        return userInput;
-
-    } else {
+    if (invalidNameQuery || !userInput) {
         return undefined;
+    } else if (validNameQuery) {
+        return cardNameParamRegEx.exec(userInput)[1];
+    } else {
+        return userInput;
     }
 }
 

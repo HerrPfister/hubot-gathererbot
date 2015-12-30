@@ -1,17 +1,17 @@
 var consts = require('../../static/consts'),
     cardUtils = require('../utils/card'),
 
-    isEmpty = require('lodash/lang/isEmpty');
+    _ = require('lodash');
 
 
 function parseResponse(robo, card) {
     var cardDetails;
 
-    if (!isEmpty(card)) {
+    if (_.isEmpty(card)) {
+        robo.send(consts.defaultError);
+    } else {
         cardDetails = cardUtils.getCardDetails(card[0]);
         cardUtils.sendDetails(robo, cardDetails);
-    } else {
-        robo.send(consts.defaultError);
     }
 }
 

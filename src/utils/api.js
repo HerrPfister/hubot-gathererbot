@@ -1,4 +1,5 @@
 var Q = require('q'),
+    _ = require('lodash'),
 
     consts = require('../../static/consts'),
     urlMap = consts.urlMap,
@@ -27,7 +28,7 @@ function getRandomMultiverseId(robot) {
         .header('Accept', 'application/json')
         .get()(function(err, res){
             var location,
-            multiverseId;
+                multiverseId;
 
             if (err) {
                 deferred.reject(err);
@@ -43,13 +44,11 @@ function getRandomMultiverseId(robot) {
 }
 
 function hasErrorCode(statusCode) {
-    return _.find(responseErrorCodes, function (code) {
-        return code === statusCode;
-    });
+    return _.includes(responseErrorCodes, statusCode);
 }
 
 module.exports = {
-    getRandomMultiverseId: getRandomMultiverseId,
     getRandomCard: getRandomCard,
+    getRandomMultiverseId: getRandomMultiverseId,
     hasErrorCode: hasErrorCode
 };

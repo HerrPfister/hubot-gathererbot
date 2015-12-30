@@ -1,5 +1,27 @@
 var gulp = require('gulp'),
-    eslint = require('gulp-eslint');
+    eslint = require('gulp-eslint'),
+    istanbul = require('gulp-istanbul'),
+
+    mocha = require('gulp-mocha');
+
+gulp.task('pre-coverage', function () {
+    return gulp.src([ 'src/**/*.js' ])
+        // Covering files
+        .pipe(istanbul({
+             includeUntested: true
+        }))
+        // Force `require` to return covered files
+        .pipe(istanbul.hookRequire());
+});
+
+gulp.task('coverage', [ 'pre-coverage' ], function () {
+    return gulp.src([ 'tests/unit/**/*.js' ])
+        .pipe(mocha())
+        // Creating the reports after tests ran
+        .pipe(istanbul.writeReports())
+        // Enforce a coverage of at least 90%
+        .pipe(istanbul.enforceThresholds({ thresholds: { global: 75 } }));
+});
 
 gulp.task('lint', function () {
     return gulp.src([ 'scripts/**/*.js', 'static/*.js' ])
@@ -13,3 +35,5 @@ gulp.task('lint', function () {
         // lint error, return the stream and pipe to failAfterError last.
         .pipe(eslint.failAfterError());
 });
+
+gulp.task('default', [ 'lint', 'coverage' ]);
