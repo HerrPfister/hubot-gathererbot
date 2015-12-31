@@ -43,60 +43,14 @@ describe('mtg find command', function () {
         });
     });
 
-    describe('parseResponse when no cards are provided', function () {
-        beforeEach(function () {
-            mtgFindCmd.parseResponse(responseSpy, '{}');
-        });
-
-        it('should return card details', function () {
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(consts.findError);
-        });
-    });
-
-    describe('parseResponse when a card name is provided', function () {
-        var listOfCards,
-            cardName,
-
-            expectedCardDetails;
-
-        function buildCards(cardCount) {
-            var cards = [];
-
-            _.times(cardCount, function () {
-                cards.push({
-                    name: fluki.string(10)
-                });
-            });
-
-            return cards;
-        }
-
-        beforeEach(function () {
-            expectedCardDetails = fluki.string(10);
-
-            listOfCards = buildCards(1);
-            cardName = _.sample(listOfCards).name;
-
-            sandbox.stub(cardUtils, 'getCardDetails').returns(expectedCardDetails);
-            sandbox.stub(cardUtils, 'sendDetails');
-
-            mtgFindCmd.parseResponse(responseSpy, JSON.stringify(listOfCards), cardName);
-        });
-
-        it('should return card details', function () {
-            expect(cardUtils.sendDetails).to.have.callCount(1);
-            expect(cardUtils.sendDetails).to.have.been.calledWith(responseSpy, expectedCardDetails);
-        });
-    });
-
-    describe('parseResponse when no card name is provided', function () {
+    describe('parseResponse', function () {
         var listOfCards,
 
             expectedGathererParams,
             expectedCardNames,
             expectedUrlParams,
-            expectedCardNameMessage;
+            expectedCardNameMessage,
+            expectedCardDetails;
 
         function buildCards(cardCount) {
             var cards = [];
@@ -117,33 +71,64 @@ describe('mtg find command', function () {
             return cards;
         }
 
-        function buildResponseMessage() {
-            var cardPoolMessage = 'Displaying ' + 5 + ' out of ' + listOfCards.length + ' cards:\n',
-                gathererMessage = 'View in Gatherer: ' + consts.urlMap.gathererAdvanced + expectedGathererParams;
-
-            return cardPoolMessage + expectedCardNameMessage + gathererMessage;
-        }
-
         beforeEach(function () {
             expectedCardNames = [];
             expectedCardNameMessage = '';
-
+            expectedCardDetails = fluki.string(10);
             expectedGathererParams = fluki.string(10);
             expectedUrlParams = fluki.string(10);
-
-            listOfCards = buildCards(fluki.integer(6, 15));
-
-            sandbox.stub(urlUtils, 'convertUrlParamsToGathererParams').returns(expectedGathererParams);
-
-            mtgFindCmd.parseResponse(responseSpy, JSON.stringify(listOfCards), undefined, expectedUrlParams);
         });
 
-        it('should return a list of 5 cards if more than 5 cards are found', function () {
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(buildResponseMessage());
+        describe('when no cards are provided', function () {
+            beforeEach(function () {
+                mtgFindCmd.parseResponse(responseSpy, '{}');
+            });
 
-            _.forEach(expectedCardNames, function (cardName, index) {
-                expect(cardName).to.equal(listOfCards[index].name);
+            it('should return card details', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(consts.findError);
+            });
+        });
+
+        describe('when a card name is provided', function () {
+            beforeEach(function () {
+                listOfCards = buildCards(1);
+
+                sandbox.stub(cardUtils, 'getCardDetails').returns(expectedCardDetails);
+                sandbox.stub(cardUtils, 'sendDetails');
+
+                mtgFindCmd.parseResponse(responseSpy, JSON.stringify(listOfCards), listOfCards[0].name);
+            });
+
+            it('should return card details', function () {
+                expect(cardUtils.sendDetails).to.have.callCount(1);
+                expect(cardUtils.sendDetails).to.have.been.calledWith(responseSpy, expectedCardDetails);
+            });
+        });
+
+        describe('when no card name is provided', function () {
+            function buildResponseMessage() {
+                var cardPoolMessage = 'Displaying ' + 5 + ' out of ' + listOfCards.length + ' cards:\n',
+                    gathererMessage = 'View in Gatherer: ' + consts.urlMap.gathererAdvanced + expectedGathererParams;
+
+                return cardPoolMessage + expectedCardNameMessage + gathererMessage;
+            }
+
+            beforeEach(function () {
+                listOfCards = buildCards(fluki.integer(6, 15));
+
+                sandbox.stub(urlUtils, 'convertUrlParamsToGathererParams').returns(expectedGathererParams);
+
+                mtgFindCmd.parseResponse(responseSpy, JSON.stringify(listOfCards), undefined, expectedUrlParams);
+            });
+
+            it('should return a list of 5 cards if more than 5 cards are found', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(buildResponseMessage());
+
+                _.forEach(expectedCardNames, function (cardName, index) {
+                    expect(cardName).to.equal(listOfCards[index].name);
+                });
             });
         });
     });

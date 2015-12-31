@@ -49,51 +49,62 @@ describe('mtg clash command', function () {
         sandbox.restore();
     });
 
-    describe('resolveClash when challenger has a card with a higher cmc', function () {
-        beforeEach(function () {
-            challenger.card = [ { name: fluki.string(10), cmc: 1 } ];
-            challenged.card = [ { name: fluki.string(10), cmc: 0 } ];
+    describe('resolveClash', function () {
 
-            mtgClashCmd.resolveClash(responseSpy, challenger, challenged);
+        describe('when challenger has a card with a higher cmc', function () {
+            beforeEach(function () {
+                challenger.card = [ { name: fluki.string(10), cmc: 1 } ];
+                challenged.card = [ { name: fluki.string(10), cmc: 0 } ];
+
+                mtgClashCmd.resolveClash(responseSpy, challenger, challenged);
+            });
+
+            it('should return the correct winner message', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(
+                    buildMessage(challenger.name,
+                                 challenged.name,
+                                 challenger.card[0],
+                                 challenged.card[0],
+                                 challenger.name)
+                );
+            });
         });
 
-        it('should return the correct winner message', function () {
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(
-                buildMessage(challenger.name, challenged.name, challenger.card[0], challenged.card[0], challenger.name)
-            );
-        });
-    });
+        describe('when challenged has a card with a higher cmc', function () {
+            beforeEach(function () {
+                challenger.card = [ { name: fluki.string(10), cmc: 0 } ];
+                challenged.card = [ { name: fluki.string(10), cmc: 1 } ];
 
-    describe('resolveClash when challenged has a card with a higher cmc', function () {
-        beforeEach(function () {
-            challenger.card = [ { name: fluki.string(10),  cmc: 0 } ];
-            challenged.card = [ { name: fluki.string(10),  cmc: 1 } ];
+                mtgClashCmd.resolveClash(responseSpy, challenger, challenged);
+            });
 
-            mtgClashCmd.resolveClash(responseSpy, challenger, challenged);
-        });
-
-        it('should return the correct winner message', function () {
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(
-                buildMessage(challenger.name, challenged.name, challenger.card[0], challenged.card[0], challenged.name)
-            );
-        });
-    });
-
-    describe('resolveClash when its a draw', function () {
-        beforeEach(function () {
-            challenger.card = [ { name: fluki.string(10),  cmc: 0 } ];
-            challenged.card = [ { name: fluki.string(10),  cmc: 0 } ];
-
-            mtgClashCmd.resolveClash(responseSpy, challenger, challenged);
+            it('should return the correct winner message', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(
+                    buildMessage(challenger.name,
+                                 challenged.name,
+                                 challenger.card[0],
+                                 challenged.card[0],
+                                 challenged.name)
+                );
+            });
         });
 
-        it('should return the correct message', function () {
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(
-                buildMessage(challenger.name, challenged.name, challenger.card[0], challenged.card[0])
-            );
+        describe('when its a draw', function () {
+            beforeEach(function () {
+                challenger.card = [ { name: fluki.string(10), cmc: 0 } ];
+                challenged.card = [ { name: fluki.string(10), cmc: 0 } ];
+
+                mtgClashCmd.resolveClash(responseSpy, challenger, challenged);
+            });
+
+            it('should return the correct message', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(
+                    buildMessage(challenger.name, challenged.name, challenger.card[0], challenged.card[0])
+                );
+            });
         });
     });
 });

@@ -35,33 +35,36 @@ describe('mtg random command', function () {
         sandbox.restore();
     });
 
-    describe('parseResponse when given a card', function () {
-        var expectedCardDetails;
+    describe('parseResponse', function () {
 
-        beforeEach(function () {
-            card[ fluki.string(10) ] = fluki.string(10);
-            expectedCardDetails = fluki.string(10);
+        describe('when given a card', function () {
+            var expectedCardDetails;
 
-            sandbox.stub(cardUtils, 'getCardDetails').returns(expectedCardDetails);
-            sandbox.stub(cardUtils, 'sendDetails');
+            beforeEach(function () {
+                card[fluki.string(10)] = fluki.string(10);
+                expectedCardDetails = fluki.string(10);
 
-            mtgRandomCmd.parseResponse(responseSpy, card);
+                sandbox.stub(cardUtils, 'getCardDetails').returns(expectedCardDetails);
+                sandbox.stub(cardUtils, 'sendDetails');
+
+                mtgRandomCmd.parseResponse(responseSpy, card);
+            });
+
+            it('should ', function () {
+                expect(cardUtils.sendDetails).to.have.callCount(1);
+                expect(cardUtils.sendDetails).to.have.been.calledWith(responseSpy, expectedCardDetails);
+            });
         });
 
-        it('should ', function () {
-            expect(cardUtils.sendDetails).to.have.callCount(1);
-            expect(cardUtils.sendDetails).to.have.been.calledWith(responseSpy, expectedCardDetails);
-        });
-    });
+        describe('parseResponse when given an empty card', function () {
+            beforeEach(function () {
+                mtgRandomCmd.parseResponse(responseSpy, card);
+            });
 
-    describe('parseResponse when given an empty card', function () {
-        beforeEach(function () {
-            mtgRandomCmd.parseResponse(responseSpy, card);
-        });
-
-        it('should ', function () {
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(consts.defaultError);
+            it('should ', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(consts.defaultError);
+            });
         });
     });
 });

@@ -16,19 +16,6 @@ var cardUtils = require('../../../../src/utils/card'),
 describe('card utils', function () {
     var sandbox;
 
-    function buildCard(power, toughness, cost, name, subtypes, text, types, editions) {
-        return {
-            power: power,
-            toughness: toughness,
-            cost: cost,
-            name: name,
-            subtypes: subtypes,
-            text: text,
-            types: types,
-            editions: editions
-        };
-    }
-
     before(function () {
         chai.use(sinonChai);
     });
@@ -41,50 +28,45 @@ describe('card utils', function () {
         sandbox.restore();
     });
 
-    describe('getCardName when provided without param formatting', function () {
-        var expectedCardName,
-            actualCardName;
+    describe('getCardName', function () {
+        var expectedCardName;
 
         beforeEach(function () {
             expectedCardName = fluki.string(10);
-            actualCardName = cardUtils.getCardName(expectedCardName);
         });
 
-        it('should return the card\'s name', function () {
-            expect(actualCardName).to.equal(expectedCardName);
-        });
-    });
-
-    describe('getCardName when provided with param formatting', function () {
-        var expectedCardName,
-            actualCardName;
-
-        beforeEach(function () {
-            expectedCardName = fluki.string(10);
-            actualCardName = cardUtils.getCardName('name=' + expectedCardName);
+        describe('when provided without param formatting', function () {
+            it('should return the card\'s name', function () {
+                var actualCardName = cardUtils.getCardName(expectedCardName);
+                expect(actualCardName).to.equal(expectedCardName);
+            });
         });
 
-        it('should return the card\'s name', function () {
-            expect(actualCardName).to.equal(expectedCardName);
+        describe('when provided with param formatting', function () {
+            it('should return the card\'s name', function () {
+                var actualCardName = cardUtils.getCardName('name=' + expectedCardName);
+                expect(actualCardName).to.equal(expectedCardName);
+            });
         });
-    });
 
-    describe('getCardName when provided with no name', function () {
-        it('should return undefined', function () {
-            var actualCardName = cardUtils.getCardName(undefined);
-            expect(actualCardName).to.equal(undefined);
+        describe('when provided with no name', function () {
+            it('should return undefined', function () {
+                var actualCardName = cardUtils.getCardName(undefined);
+                expect(actualCardName).to.equal(undefined);
 
-            actualCardName = cardUtils.getCardName('');
-            expect(actualCardName).to.equal(undefined);
+                actualCardName = cardUtils.getCardName('');
+                expect(actualCardName).to.equal(undefined);
 
-            actualCardName = cardUtils.getCardName(fluki.string(10) + '=' + fluki.string(10));
-            expect(actualCardName).to.equal(undefined);
+                actualCardName = cardUtils.getCardName(fluki.string(10) + '=' + fluki.string(10));
+                expect(actualCardName).to.equal(undefined);
+            });
         });
     });
 
-    describe('getCardDetails when given a card', function () {
+    describe('getCardDetails', function () {
         var actualCardDetails,
 
+            expectedPrices,
             expectedCard,
             expectedCost,
             expectedImageUrl,
@@ -96,15 +78,46 @@ describe('card utils', function () {
             expectedToughness,
             expectedTypes;
 
-        function buildRandomEditions(imageUrl) {
-            var randomEditions = [];
+        function buildCard(power, toughness, cost, name, subtypes, text, types, editions) {
+            return {
+                power: power,
+                toughness: toughness,
+                cost: cost,
+                name: name,
+                subtypes: subtypes,
+                text: text,
+                types: types,
+                editions: editions
+            };
+        }
 
-            _.times(fluki.integer(2, 10), function (count) {
+        function buildRandomEditions(imageUrl) {
+            var randomEditions = [],
+                numberOfEditions = fluki.integer(2, 10);
+
+            _.times(numberOfEditions, function (count) {
+                var low = fluki.integer(2, 100),
+                    high = fluki.integer(2, 100),
+                    average = fluki.integer(2, 100);
+
                 randomEditions.push({
                     multiverse_id: count,
-                    image_url: imageUrl
+                    image_url: imageUrl,
+                    price: {
+                        low: low,
+                        high: high,
+                        average: average
+                    }
                 });
+
+                expectedPrices.low += low;
+                expectedPrices.high += high;
+                expectedPrices.average += average;
             });
+
+            expectedPrices.low = '$' + Math.ceil(expectedPrices.low / numberOfEditions);
+            expectedPrices.high = '$' + Math.ceil(expectedPrices.high / numberOfEditions);
+            expectedPrices.average = '$' + Math.ceil(expectedPrices.average / numberOfEditions);
 
             return _.shuffle(randomEditions);
         }
@@ -118,87 +131,99 @@ describe('card utils', function () {
             expectedSubTypes = fluki.string(10);
             expectedText = fluki.string(10);
             expectedTypes = fluki.string(10);
+            expectedPrices = {low: 0, high: 0, average: 0};
 
             expectedRandomEditions = buildRandomEditions(expectedImageUrl);
-
-            expectedCard = buildCard(
-                expectedPower,
-                expectedToughness,
-                expectedCost,
-                expectedName,
-                expectedSubTypes,
-                expectedText,
-                expectedTypes,
-                expectedRandomEditions
-            );
-
-            actualCardDetails = cardUtils.getCardDetails(expectedCard);
         });
 
-        it('should return card details', function () {
-            expect(actualCardDetails.attributes).to.equal(expectedCard.power + '/' + expectedCard.toughness);
-            expect(actualCardDetails.name).to.equal(expectedCard.name);
-            expect(actualCardDetails.cost).to.equal(expectedCard.cost);
-            expect(actualCardDetails.subtypes).to.equal(expectedCard.subtypes);
-            expect(actualCardDetails.text).to.equal(expectedCard.text);
-            expect(actualCardDetails.types).to.equal(expectedCard.types);
+        describe('when given a card', function () {
+            beforeEach(function () {
+                expectedCard = buildCard(
+                    expectedPower,
+                    expectedToughness,
+                    expectedCost,
+                    expectedName,
+                    expectedSubTypes,
+                    expectedText,
+                    expectedTypes,
+                    expectedRandomEditions
+                );
 
-            expect(actualCardDetails.gathererText).to.not.equal('View in Gatherer: ' + urlMap.gatherer + '0');
-            expect(actualCardDetails.cardImage).to.equal(expectedImageUrl);
+                actualCardDetails = cardUtils.getCardDetails(expectedCard);
+            });
+
+            it('should return card details', function () {
+                expect(actualCardDetails.prices.low).to.equal(expectedPrices.low);
+                expect(actualCardDetails.prices.high).to.equal(expectedPrices.high);
+                expect(actualCardDetails.prices.average).to.equal(expectedPrices.average);
+
+                expect(actualCardDetails.attributes).to.equal(expectedCard.power + '/' + expectedCard.toughness);
+                expect(actualCardDetails.name).to.equal(expectedCard.name);
+                expect(actualCardDetails.cost).to.equal(expectedCard.cost);
+                expect(actualCardDetails.subtypes).to.equal(expectedCard.subtypes);
+                expect(actualCardDetails.text).to.equal(expectedCard.text);
+                expect(actualCardDetails.types).to.equal(expectedCard.types);
+
+                expect(actualCardDetails.gathererText).to.not.equal('View in Gatherer: ' + urlMap.gatherer + '0');
+                expect(actualCardDetails.cardImage).to.equal(expectedImageUrl);
+            });
+        });
+
+        describe('when given a card without editions', function () {
+            beforeEach(function () {
+                expectedCard = buildCard(
+                    expectedPower,
+                    expectedToughness,
+                    expectedCost,
+                    expectedName,
+                    expectedSubTypes,
+                    expectedText,
+                    expectedTypes
+                );
+
+                actualCardDetails = cardUtils.getCardDetails(expectedCard);
+            });
+
+            it('should return undefined for card image and gatherer text', function () {
+                expect(actualCardDetails.gathererText).to.equal(undefined);
+                expect(actualCardDetails.cardImage).to.equal(undefined);
+                expect(actualCardDetails.prices).to.equal(undefined);
+            });
+        });
+
+        describe('when given a card without power/toughness', function () {
+            beforeEach(function () {
+                expectedCard = buildCard(
+                    undefined,
+                    undefined,
+                    expectedCost,
+                    expectedName,
+                    expectedSubTypes,
+                    expectedText,
+                    expectedTypes,
+                    expectedRandomEditions
+                );
+
+                actualCardDetails = cardUtils.getCardDetails(expectedCard);
+            });
+
+            it('should return undefined for card attributes', function () {
+                expect(actualCardDetails.attributes).to.equal(undefined);
+            });
         });
     });
 
-    describe('getCardDetails when given a card without an edition or attributes', function () {
-        var actualCardDetails,
-            expectedCard;
-
-        beforeEach(function () {
-            expectedCard = buildCard(
-                undefined,
-                undefined,
-                fluki.integer(2, 10),
-                fluki.string(10),
-                fluki.string(10),
-                fluki.string(10),
-                fluki.string(10)
-            );
-
-            actualCardDetails = cardUtils.getCardDetails(expectedCard);
-        });
-
-        it('should return undefined for card image and gatherer text', function () {
-            expect(actualCardDetails.gathererText).to.equal(undefined);
-            expect(actualCardDetails.cardImage).to.equal(undefined);
-        });
-
-        it('should return undefined for card attributes', function () {
-            expect(actualCardDetails.attributes).to.equal(undefined);
-        });
-    });
-
-    describe('sendDetails when given an undefined card', function () {
-        var responseSpy;
-
-        beforeEach(function () {
-            responseSpy = {
-                send: sandbox.spy()
-            };
-
-            cardUtils.sendDetails(responseSpy);
-        });
-
-        it('should send an error', function () {
-            var expectedMessage = 'There was an issue retrieving the cards\'s details. Please try again.';
-
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(expectedMessage);
-        });
-    });
-
-    describe('sendDetails when given a card with an image', function () {
+    describe('sendDetails', function () {
         var responseSpy,
+            expectedName,
+            expectedText,
+            expectedCost,
+            expectedTypes,
+            expectedSubtypes,
+            expectedAttributes,
             expectedImage,
-            expectedGathererText;
+            expectedGathererText,
+            expectedPrices;
 
         beforeEach(function () {
             responseSpy = {
@@ -208,63 +233,95 @@ describe('card utils', function () {
             expectedImage = fluki.string(10);
             expectedGathererText = fluki.string(10);
 
-            cardUtils.sendDetails(responseSpy, {
-                cardImage: expectedImage,
-                gathererText: expectedGathererText
-            });
-        });
-
-        it('should send the card\'s image', function () {
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(expectedImage + '\n' + expectedGathererText);
-        });
-    });
-
-    describe('sendDetails when given a card with no image', function () {
-        var responseSpy,
-            expectedGathererText,
-            expectedName,
-            expectedText,
-            expectedCost,
-            expectedTypes,
-            expectedSubtypes,
-            expectedAttributes;
-
-        beforeEach(function () {
-            responseSpy = {
-                send: sandbox.spy()
-            };
-
             expectedName = fluki.string(10);
             expectedText = fluki.string(10);
             expectedCost = fluki.string(10);
             expectedTypes = fluki.string(10);
             expectedSubtypes = fluki.string(10);
-            expectedAttributes = fluki.string(10);
-            expectedGathererText = fluki.string(10);
+            expectedPrices = {
+                low: fluki.string(10),
+                high: fluki.string(10),
+                average: fluki.string(10)
+            };
 
-            cardUtils.sendDetails(responseSpy, {
-                name: expectedName,
-                text: expectedText,
-                cost: expectedCost,
-                types: expectedTypes,
-                subtypes: expectedSubtypes,
-                attributes: expectedAttributes,
-                gathererText: expectedGathererText
+            expectedAttributes = fluki.string(10);
+        });
+
+        describe('when given an undefined card', function () {
+            beforeEach(function () {
+                cardUtils.sendDetails(responseSpy);
+            });
+
+            it('should send an error', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(
+                    'There was an issue retrieving the cards\'s details. Please try again.'
+                );
             });
         });
 
-        it('should send the card\'s details', function () {
-            expect(responseSpy.send).to.have.callCount(1);
-            expect(responseSpy.send).to.have.been.calledWith(
-                expectedName + '\n' +
-                expectedText + '\n' +
-                expectedCost + '\n' +
-                expectedTypes + '\n' +
-                expectedSubtypes + '\n' +
-                expectedAttributes +'\n' +
-                expectedGathererText
-            );
+        describe('when given a card without prices', function () {
+            beforeEach(function () {
+                cardUtils.sendDetails(responseSpy, {
+                    cardImage: expectedImage,
+                    gathererText: expectedGathererText
+                });
+            });
+
+            it('should send the correct message', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(
+                    expectedImage + '\nlow: N/A high: N/A avg: N/A\n' + expectedGathererText
+                );
+            });
+        });
+
+        describe('when given a card with an image', function () {
+            beforeEach(function () {
+                cardUtils.sendDetails(responseSpy, {
+                    cardImage: expectedImage,
+                    prices: expectedPrices,
+                    gathererText: expectedGathererText
+                });
+            });
+
+            it('should send the card\'s image', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(
+                    expectedImage +
+                    '\nlow: ' + expectedPrices.low + ' high: ' + expectedPrices.high + ' avg: ' + expectedPrices.average +
+                    '\n' + expectedGathererText
+                );
+            });
+        });
+
+        describe('when given a card with no image', function () {
+            beforeEach(function () {
+                cardUtils.sendDetails(responseSpy, {
+                    name: expectedName,
+                    text: expectedText,
+                    cost: expectedCost,
+                    types: expectedTypes,
+                    subtypes: expectedSubtypes,
+                    attributes: expectedAttributes,
+                    gathererText: expectedGathererText,
+                    prices: expectedPrices
+                });
+            });
+
+            it('should send the card\'s details', function () {
+                expect(responseSpy.send).to.have.callCount(1);
+                expect(responseSpy.send).to.have.been.calledWith(
+                    expectedName + '\n' +
+                    expectedText + '\n' +
+                    expectedCost + '\n' +
+                    expectedTypes + '\n' +
+                    expectedSubtypes + '\n' +
+                    expectedAttributes + '\n' +
+                    'low: ' + expectedPrices.low + ' high: ' + expectedPrices.high + ' avg: ' + expectedPrices.average + '\n' +
+                    expectedGathererText
+                );
+            });
         });
     });
 });

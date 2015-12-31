@@ -18,12 +18,43 @@
 var apiUtils = require('./utils/api'),
     cardUtils = require('./utils/card'),
     urlUtils = require('./utils/url'),
+
     mtgFind = require('./commands/mtg-find'),
     mtgClash = require('./commands/mtg-clash'),
     mtgRandom = require('./commands/mtg-random'),
+
     urlMap = require('../static/consts').urlMap,
 
     Q = require('q');
+
+function clash(robot, chat) {
+    var randomMultiverseIds = [
+        apiUtils.getRandomMultiverseId(robot),
+        apiUtils.getRandomMultiverseId(robot)
+    ];
+
+    Q.all(randomMultiverseIds)
+        .done(function (multiverseIds) {
+                  var randomCards = [
+                      apiUtils.getRandomCard(robot, multiverseIds[0]),
+                      apiUtils.getRandomCard(robot, multiverseIds[1])
+                  ];
+
+                  Q.all(randomCards)
+                      .done(function (cards) {
+                                var challenger = {
+                                    name: chat.message.user.name,
+                                    card: cards[0]
+                                },
+                                challenged = {
+                                    name: chat.match[1],
+                                    card: cards[1]
+                                };
+
+                                mtgClash.resolveClash(chat, challenger, challenged);
+                            });
+              });
+}
 
 function find(robot, chat) {
     var cardName = cardUtils.getCardName(chat.match[1]),
@@ -54,37 +85,8 @@ function random(robot, chat) {
         });
 }
 
-function clash(robot, chat) {
-        var randomMultiverseIds = [
-            apiUtils.getRandomMultiverseId(robot),
-            apiUtils.getRandomMultiverseId(robot)
-        ];
-
-        Q.all(randomMultiverseIds)
-            .done(function (multiverseIds) {
-                var randomCards = [
-                  apiUtils.getRandomCard(robot, multiverseIds[0]),
-                  apiUtils.getRandomCard(robot, multiverseIds[1])
-                ];
-
-                Q.all(randomCards)
-                    .done(function (cards) {
-                        var challenger = {
-                            name: chat.message.user.name,
-                            card: cards[0]
-                        },
-                        challenged = {
-                            name: chat.match[1],
-                            card: cards[1]
-                        };
-
-                        mtgClash.resolveClash(chat, challenger, challenged);
-                    });
-            });
-}
-
 module.exports = function (robot) {
     robot.respond(/mtg\s+clash\s+(@\w+)/i, clash.bind(this, robot));
-    robot.respond(/mtg\s+random/i, random.bind(this, robot));
     robot.respond(/mtg\s+find\s+(.*)/i, find.bind(this, robot));
+    robot.respond(/mtg\s+random/i, random.bind(this, robot));
 };

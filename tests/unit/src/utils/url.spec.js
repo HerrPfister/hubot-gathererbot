@@ -28,62 +28,65 @@ describe('url utils', function () {
         sandbox.restore();
     });
 
-    describe('convertUserInputToUrlParams when not given user input', function () {
-        it('should return empty string', function () {
-            var parsedParams = urlUtils.convertUserInputToUrlParams('');
-            expect(parsedParams).to.equal('');
+    describe('convertUserInputToUrlParams', function () {
 
-            parsedParams = urlUtils.convertUserInputToUrlParams(undefined);
-            expect(parsedParams).to.equal('');
+        describe('when not given user input', function () {
+            it('should return empty string', function () {
+                var parsedParams = urlUtils.convertUserInputToUrlParams('');
+                expect(parsedParams).to.equal('');
+
+                parsedParams = urlUtils.convertUserInputToUrlParams(undefined);
+                expect(parsedParams).to.equal('');
+            });
         });
-    });
 
-    describe('convertUserInputToUrlParams when not given properly formatted user input', function () {
-        it('should return just the name param', function () {
-            var expectedUserInput = fluki.string(10),
-                parsedParams = urlUtils.convertUserInputToUrlParams(expectedUserInput);
+        describe('when not given properly formatted user input', function () {
+            it('should return just the name param', function () {
+                var expectedUserInput = fluki.string(10),
+                    parsedParams = urlUtils.convertUserInputToUrlParams(expectedUserInput);
 
-            expect(parsedParams).to.equal('name=' + expectedUserInput);
+                expect(parsedParams).to.equal('name=' + expectedUserInput);
+            });
         });
-    });
 
-    describe('convertUserInputToUrlParams when given properly formatted user input', function () {
-        var expectedKeys,
-            expectedValues;
+        describe('when given properly formatted user input', function () {
+            var expectedKeys,
+                expectedValues;
 
-        function buildUserInputString() {
-            var userInput = [];
+            function buildUserInputString() {
+                var userInput = [];
 
-            _.times(fluki.integer(2, 10), function () {
-                var randomKey = fluki.string(5),
+                _.times(fluki.integer(2, 10), function () {
+                    var randomKey = fluki.string(5),
                     randomValue = fluki.string(5);
 
-                userInput.push(randomKey + '=' + randomValue);
-                expectedKeys.push(randomKey);
-                expectedValues.push(randomValue);
+                    userInput.push(randomKey + '=' + randomValue);
+                    expectedKeys.push(randomKey);
+                    expectedValues.push(randomValue);
+                });
+
+                return userInput.join(',');
+            }
+
+            beforeEach(function () {
+                expectedKeys = [];
+                expectedValues = [];
             });
 
-            return userInput.join(',');
-        }
-
-        beforeEach(function () {
-            expectedKeys = [];
-            expectedValues = [];
-        });
-
-        it('should return converted user input', function () {
-            var expectedUserInput = buildUserInputString(),
+            it('should return converted user input', function () {
+                var expectedUserInput = buildUserInputString(),
                 parsedParams = urlUtils.convertUserInputToUrlParams(expectedUserInput);
 
-            _.forEach(parsedParams.split('&'), function(param, index) {
-                var expectedParam = expectedKeys[index] + '=' + expectedValues[index];
+                _.forEach(parsedParams.split('&'), function (param, index) {
+                    var expectedParam = expectedKeys[index] + '=' + expectedValues[index];
 
-                expect(param).to.equal(expectedParam);
+                    expect(param).to.equal(expectedParam);
+                });
             });
         });
     });
 
-    describe('convertUrlParamsToGathererParams when user input is given', function () {
+    describe('convertUrlParamsToGathererParams', function () {
         var expectedGathererColorKey,
             expectedGathererRarityKey,
             expectedColor,
@@ -91,25 +94,7 @@ describe('url utils', function () {
 
             actualGathererParams;
 
-        function buildExtraUrlParams(baseUrlParams) {
-            _.times(fluki.integer(2, 10), function () {
-                var key = fluki.string(10),
-                    value = fluki.string(10),
-                    gathererKey = fluki.string(10);
-
-                baseUrlParams.push(key + '=' + value);
-
-                gathererKeyMapper.map.withArgs(key).returns(gathererKey);
-            });
-
-            return _.shuffle(baseUrlParams).join('&');
-        }
-
         beforeEach(function () {
-            var urlParams,
-                color = fluki.string(5),
-                rarity = fluki.string(5);
-
             expectedGathererColorKey = fluki.string(10);
             expectedGathererRarityKey = fluki.string(10);
             expectedColor = fluki.string(10);
@@ -121,26 +106,45 @@ describe('url utils', function () {
 
             gathererKeyMapper.map.withArgs('color').returns(expectedGathererColorKey);
             gathererKeyMapper.map.withArgs('rarity').returns(expectedGathererRarityKey);
-
-            urlParams = buildExtraUrlParams([ 'color=' + color, 'rarity=' + rarity ]);
-
-            actualGathererParams = urlUtils.convertUrlParamsToGathererParams(urlParams);
         });
 
-        it('should return converted url params', function () {
-            var gathererParams = actualGathererParams.split('&');
+        describe('when user input is given', function () {
+            function buildExtraUrlParams(baseUrlParams) {
+                _.times(fluki.integer(2, 10), function () {
+                    var key = fluki.string(10),
+                    value = fluki.string(10),
+                    gathererKey = fluki.string(10);
 
-            expect(gathererParams).to.include(expectedGathererColorKey + '[' + expectedColor + ']');
-            expect(gathererParams).to.include(expectedGathererRarityKey + '[' + expectedRarity + ']');
+                    baseUrlParams.push(key + '=' + value);
+
+                    gathererKeyMapper.map.withArgs(key).returns(gathererKey);
+                });
+
+                return _.shuffle(baseUrlParams).join('&');
+            }
+
+            beforeEach(function () {
+                var urlParams = buildExtraUrlParams([ 'color=' + fluki.string(5), 'rarity=' + fluki.string(5) ]);
+
+                actualGathererParams = urlUtils.convertUrlParamsToGathererParams(urlParams);
+            });
+
+            it('should return converted url params', function () {
+                var gathererParams = actualGathererParams.split('&');
+
+                expect(gathererParams).to.include(expectedGathererColorKey + '[' + expectedColor + ']');
+                expect(gathererParams).to.include(expectedGathererRarityKey + '[' + expectedRarity + ']');
+            });
         });
-    });
-    describe('convertUrlParamsToGathererParams when user input is not given', function () {
-        it('should return empty string', function () {
-            var gathererParams = urlUtils.convertUrlParamsToGathererParams(undefined);
-            expect(gathererParams).to.equal('');
 
-            gathererParams = urlUtils.convertUrlParamsToGathererParams('');
-            expect(gathererParams).to.equal('');
+        describe('when user input is not given', function () {
+            it('should return empty string', function () {
+                var gathererParams = urlUtils.convertUrlParamsToGathererParams(undefined);
+                expect(gathererParams).to.equal('');
+
+                gathererParams = urlUtils.convertUrlParamsToGathererParams('');
+                expect(gathererParams).to.equal('');
+            });
         });
     });
 });

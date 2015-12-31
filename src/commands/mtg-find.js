@@ -36,13 +36,14 @@ function findCard(cards, cardName) {
 
 function parseResponse(robo, body, cardName, urlParams) {
     var cardDetails,
-        cards = JSON.parse(body);
+        cards = JSON.parse(body),
+        card = findCard(cards, cardName || '');
 
     if (!cards.length) {
         robo.send(consts.findError);
 
-    } else if (cardName) {
-        cardDetails = cardUtils.getCardDetails(findCard(cards, cardName));
+    } else if (card) {
+        cardDetails = cardUtils.getCardDetails(card);
         cardUtils.sendDetails(robo, cardDetails);
 
     } else {
