@@ -86,11 +86,7 @@ function randomCard(robot, chat) {
 }
 
 module.exports = function (robot) {
-    robot.respond(/.*/i, function(chat) {
-        console.log('test');
-        chat.send('test');
-    });
-    //robot.respond(/mtg\s+clash\s+(@\w+)/i, clash.bind(this, robot));
-    //robot.respond(/mtg\s+find\s+(.*)/i, findCard.bind(this, robot));
-    //robot.respond(/mtg\s+random/i, randomCard.bind(this, robot));
+    robot.respond(/mtg\s+clash\s+(@\w+)/i, clash.bind(this, robot));
+    robot.respond(/mtg\s+find\s+(.*)/i, findCard.bind(this, robot));
+    robot.respond(/mtg\s+random/i, randomCard.bind(this, robot));
 };
