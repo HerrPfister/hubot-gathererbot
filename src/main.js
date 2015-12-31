@@ -35,25 +35,25 @@ function clash(robot, chat) {
 
     Q.all(randomMultiverseIds)
         .done(function (multiverseIds) {
-                  var randomCards = [
-                      apiUtils.getRandomCard(robot, multiverseIds[0]),
-                      apiUtils.getRandomCard(robot, multiverseIds[1])
-                  ];
+            var randomCards = [
+                apiUtils.getRandomCard(robot, multiverseIds[0]),
+                apiUtils.getRandomCard(robot, multiverseIds[1])
+            ];
 
-                  Q.all(randomCards)
-                      .done(function (cards) {
-                                var challenger = {
-                                    name: chat.message.user.name,
-                                    card: cards[0]
-                                },
-                                challenged = {
-                                    name: chat.match[1],
-                                    card: cards[1]
-                                };
+            Q.all(randomCards)
+            .done(function (cards) {
+                var challenger = {
+                    name: chat.message.user.name,
+                    card: cards[0]
+                },
+                challenged = {
+                    name: chat.match[1],
+                    card: cards[1]
+                };
 
-                                mtgClash.resolveClash(chat, challenger, challenged);
-                            });
-              });
+                mtgClash.resolveClash(chat, challenger, challenged);
+            });
+        });
 }
 
 function findCard(robot, chat) {
@@ -86,7 +86,7 @@ function randomCard(robot, chat) {
 }
 
 module.exports = function (robot) {
-    robot.respond(/mtg\s+clash\s+(@\w+)/i, clash.bind(this, robot));
+    robot.respond(/mtg\s+clash\s+(.*)/i, clash.bind(this, robot));
     robot.respond(/mtg\s+find\s+(.*)/i, findCard.bind(this, robot));
     robot.respond(/mtg\s+random/i, randomCard.bind(this, robot));
 };

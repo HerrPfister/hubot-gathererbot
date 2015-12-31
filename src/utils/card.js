@@ -37,9 +37,9 @@ function getAveragePrices(editions) {
     if (editions) {
         prices = _.reduce(editions, function (prices, edition) {
             return {
-                low: prices.low + edition.price.low,
-                high: prices.high + edition.price.high,
-                average: prices.average + edition.price.average
+                low: prices.low + (edition.price.low || 0),
+                high: prices.high + (edition.price.high || 0),
+                average: prices.average + (edition.price.average || 0)
             };
         }, { low: 0, high: 0, average: 0 });
 
