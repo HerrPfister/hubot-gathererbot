@@ -56,7 +56,7 @@ function clash(robot, chat) {
               });
 }
 
-function find(robot, chat) {
+function findCard(robot, chat) {
     var cardName = cardUtils.getCardName(chat.match[1]),
         urlParams = urlUtils.convertUserInputToUrlParams(chat.match[1]);
 
@@ -75,7 +75,7 @@ function find(robot, chat) {
         });
 }
 
-function random(robot, chat) {
+function randomCard(robot, chat) {
     apiUtils.getRandomMultiverseId(robot)
         .then(function (multiverseId) {
             return apiUtils.getRandomCard(robot, multiverseId);
@@ -86,7 +86,11 @@ function random(robot, chat) {
 }
 
 module.exports = function (robot) {
-    robot.respond(/mtg\s+clash\s+(@\w+)/i, clash.bind(this, robot));
-    robot.respond(/mtg\s+find\s+(.*)/i, find.bind(this, robot));
-    robot.respond(/mtg\s+random/i, random.bind(this, robot));
+    robot.respond(/.*/i, function(chat) {
+        console.log('test');
+        chat.send('test');
+    });
+    //robot.respond(/mtg\s+clash\s+(@\w+)/i, clash.bind(this, robot));
+    //robot.respond(/mtg\s+find\s+(.*)/i, findCard.bind(this, robot));
+    //robot.respond(/mtg\s+random/i, randomCard.bind(this, robot));
 };
