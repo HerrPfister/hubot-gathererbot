@@ -66,7 +66,6 @@ describe('card utils', function () {
     describe('getCardDetails', function () {
         var actualCardDetails,
 
-            expectedPrices,
             expectedCard,
             expectedCost,
             expectedImageUrl,
@@ -109,15 +108,7 @@ describe('card utils', function () {
                         average: average
                     }
                 });
-
-                expectedPrices.low += low;
-                expectedPrices.high += high;
-                expectedPrices.average += average;
             });
-
-            expectedPrices.low = '$' + Math.ceil(expectedPrices.low / numberOfEditions);
-            expectedPrices.high = '$' + Math.ceil(expectedPrices.high / numberOfEditions);
-            expectedPrices.average = '$' + Math.ceil(expectedPrices.average / numberOfEditions);
 
             return _.shuffle(randomEditions);
         }
@@ -131,7 +122,6 @@ describe('card utils', function () {
             expectedSubTypes = fluki.string(10);
             expectedText = fluki.string(10);
             expectedTypes = fluki.string(10);
-            expectedPrices = {low: 0, high: 0, average: 0};
 
             expectedRandomEditions = buildRandomEditions(expectedImageUrl);
         });
@@ -153,10 +143,6 @@ describe('card utils', function () {
             });
 
             it('should return card details', function () {
-                expect(actualCardDetails.prices.low).to.equal(expectedPrices.low);
-                expect(actualCardDetails.prices.high).to.equal(expectedPrices.high);
-                expect(actualCardDetails.prices.average).to.equal(expectedPrices.average);
-
                 expect(actualCardDetails.attributes).to.equal(expectedCard.power + '/' + expectedCard.toughness);
                 expect(actualCardDetails.name).to.equal(expectedCard.name);
                 expect(actualCardDetails.cost).to.equal(expectedCard.cost);
@@ -187,7 +173,6 @@ describe('card utils', function () {
             it('should return undefined for card image and gatherer text', function () {
                 expect(actualCardDetails.gathererText).to.equal(undefined);
                 expect(actualCardDetails.cardImage).to.equal(undefined);
-                expect(actualCardDetails.prices).to.equal(undefined);
             });
         });
 
@@ -222,8 +207,7 @@ describe('card utils', function () {
             expectedSubtypes,
             expectedAttributes,
             expectedImage,
-            expectedGathererText,
-            expectedPrices;
+            expectedGathererText;
 
         beforeEach(function () {
             responseSpy = {
@@ -238,11 +222,6 @@ describe('card utils', function () {
             expectedCost = fluki.string(10);
             expectedTypes = fluki.string(10);
             expectedSubtypes = fluki.string(10);
-            expectedPrices = {
-                low: fluki.string(10),
-                high: fluki.string(10),
-                average: fluki.string(10)
-            };
 
             expectedAttributes = fluki.string(10);
         });
@@ -260,38 +239,17 @@ describe('card utils', function () {
             });
         });
 
-        describe('when given a card without prices', function () {
-            beforeEach(function () {
-                cardUtils.sendDetails(responseSpy, {
-                    cardImage: expectedImage,
-                    gathererText: expectedGathererText
-                });
-            });
-
-            it('should send the correct message', function () {
-                expect(responseSpy.send).to.have.callCount(1);
-                expect(responseSpy.send).to.have.been.calledWith(
-                    expectedImage + '\nlow: N/A high: N/A avg: N/A\n' + expectedGathererText
-                );
-            });
-        });
-
         describe('when given a card with an image', function () {
             beforeEach(function () {
                 cardUtils.sendDetails(responseSpy, {
                     cardImage: expectedImage,
-                    prices: expectedPrices,
                     gathererText: expectedGathererText
                 });
             });
 
             it('should send the card\'s image', function () {
                 expect(responseSpy.send).to.have.callCount(1);
-                expect(responseSpy.send).to.have.been.calledWith(
-                    expectedImage +
-                    '\nlow: ' + expectedPrices.low + ' high: ' + expectedPrices.high + ' avg: ' + expectedPrices.average +
-                    '\n' + expectedGathererText
-                );
+                expect(responseSpy.send).to.have.been.calledWith(expectedImage + '\n' + expectedGathererText);
             });
         });
 
@@ -304,8 +262,7 @@ describe('card utils', function () {
                     types: expectedTypes,
                     subtypes: expectedSubtypes,
                     attributes: expectedAttributes,
-                    gathererText: expectedGathererText,
-                    prices: expectedPrices
+                    gathererText: expectedGathererText
                 });
             });
 
@@ -318,7 +275,6 @@ describe('card utils', function () {
                     expectedTypes + '\n' +
                     expectedSubtypes + '\n' +
                     expectedAttributes + '\n' +
-                    'low: ' + expectedPrices.low + ' high: ' + expectedPrices.high + ' avg: ' + expectedPrices.average + '\n' +
                     expectedGathererText
                 );
             });

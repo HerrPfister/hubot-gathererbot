@@ -2,25 +2,18 @@ var _ = require('lodash'),
     urlMap = require('../../static/consts').urlMap;
 
 function buildDetailsString(cardDetails) {
-    var prices = cardDetails.prices,
-        priceText = prices ?
-            'low: ' + prices.low + ' high: ' + prices.high + ' avg: ' + prices.average :
-            'low: N/A high: N/A avg: N/A';
-
-        details = cardDetails.cardImage ? [
-            cardDetails.cardImage,
-            priceText,
-            cardDetails.gathererText
-        ] : [
-            cardDetails.name,
-            cardDetails.text,
-            cardDetails.cost,
-            cardDetails.types,
-            cardDetails.subtypes,
-            cardDetails.attributes,
-            priceText,
-            cardDetails.gathererText
-        ];
+    var details = cardDetails.cardImage ? [
+        cardDetails.cardImage,
+        cardDetails.gathererText
+    ] : [
+        cardDetails.name,
+        cardDetails.text,
+        cardDetails.cost,
+        cardDetails.types,
+        cardDetails.subtypes,
+        cardDetails.attributes,
+        cardDetails.gathererText
+    ];
 
     return details.join('\n');
 }
@@ -31,42 +24,22 @@ function getFirstEditionFrom(editions) {
     });
 }
 
-function getAveragePrices(editions) {
-    var prices;
-
-    if (editions) {
-        prices = _.reduce(editions, function (prices, edition) {
-            return {
-                low: prices.low + (edition.price.low || 0),
-                high: prices.high + (edition.price.high || 0),
-                average: prices.average + (edition.price.average || 0)
-            };
-        }, { low: 0, high: 0, average: 0 });
-
-        return _.mapValues(prices, function (price) {
-            return '$' + Math.ceil(price / editions.length);
-        });
-    }
-}
-
 function getCardDetails(card) {
     var attributes = (card.power > -1 && card.toughness > -1) ? card.power + '/' + card.toughness : undefined,
 
-        cardAvgPrices = getAveragePrices(card.editions),
         cardEdition = getFirstEditionFrom(card.editions),
         cardImage = cardEdition ? cardEdition.image_url : undefined,
         gathererText = cardEdition ? 'View in Gatherer: ' + urlMap.gatherer + cardEdition.multiverse_id : undefined;
 
     return {
-        attributes: attributes,
-        cardImage: cardImage,
-        cost: card.cost,
-        gathererText: gathererText,
-        name: card.name,
-        subtypes: card.subtypes,
-        text: card.text,
-        types: card.types,
-        prices: cardAvgPrices
+        attributes : attributes,
+        cardImage : cardImage,
+        cost : card.cost,
+        gathererText : gathererText,
+        name : card.name,
+        subtypes : card.subtypes,
+        text : card.text,
+        types : card.types
     };
 }
 
@@ -96,7 +69,7 @@ function sendDetails(res, cardDetails) {
 }
 
 module.exports = {
-    getCardName: getCardName,
-    getCardDetails: getCardDetails,
-    sendDetails: sendDetails
+    getCardName : getCardName,
+    getCardDetails : getCardDetails,
+    sendDetails : sendDetails
 };
