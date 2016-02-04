@@ -105,6 +105,8 @@ function randomCard(robot, chat) {
         function (err, response) {
             if (!err) {
                 mtgRandom.parseResponse(chat, response);
+            } else {
+                robot.send(err);
             }
         }
     );

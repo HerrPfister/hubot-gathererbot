@@ -11,7 +11,9 @@ function parseCommandError(robo) {
 }
 
 function getCardPoolSizeString(poolSize) {
-    return 'Displaying ' + CARD_LIMIT + ' out of ' + poolSize + ' cards:';
+    var limit = poolSize < 5 ? poolSize : CARD_LIMIT;
+
+    return 'Displaying ' + limit + ' out of ' + poolSize + ' cards:';
 }
 
 function createCardList(cards) {

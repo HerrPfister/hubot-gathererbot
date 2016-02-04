@@ -19,14 +19,14 @@ describe('mtg find command', function () {
         responseSpy;
 
     before(function () {
-       chai.use(sinonChai);
+        chai.use(sinonChai);
     });
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
 
         responseSpy = {
-            send: sandbox.stub()
+            send : sandbox.stub()
         };
     });
 
@@ -59,7 +59,7 @@ describe('mtg find command', function () {
                 var cardName = fluki.string(10);
 
                 cards.push({
-                    name: cardName
+                    name : cardName
                 });
 
                 if (count < 5) {
@@ -107,27 +107,57 @@ describe('mtg find command', function () {
         });
 
         describe('when no card name is provided', function () {
-            function buildResponseMessage() {
-                var cardPoolMessage = 'Displaying ' + 5 + ' out of ' + listOfCards.length + ' cards:\n',
+            var expectedMessage;
+
+            function buildResponseMessage(numberOfCards) {
+                var sampleSize = numberOfCards > 5 ? 5 : numberOfCards,
+                    cardPoolMessage = 'Displaying ' + sampleSize + ' out of ' + listOfCards.length + ' cards:\n',
                     gathererMessage = 'View in Gatherer: ' + consts.urlMap.gathererAdvanced + expectedGathererParams;
 
                 return cardPoolMessage + expectedCardNameMessage + gathererMessage;
             }
 
             beforeEach(function () {
-                listOfCards = buildCards(fluki.integer(6, 15));
-
                 sandbox.stub(urlUtils, 'convertUrlParamsToGathererParams').returns(expectedGathererParams);
-
-                mtgFindCmd.parseResponse(responseSpy, JSON.stringify(listOfCards), undefined, expectedUrlParams);
             });
 
-            it('should return a list of 5 cards if more than 5 cards are found', function () {
-                expect(responseSpy.send).to.have.callCount(1);
-                expect(responseSpy.send).to.have.been.calledWith(buildResponseMessage());
+            describe('when response has 5 or more cards', function () {
+                beforeEach(function () {
+                    var numberOfCards = fluki.integer(5, 15);
 
-                _.forEach(expectedCardNames, function (cardName, index) {
-                    expect(cardName).to.equal(listOfCards[index].name);
+                    listOfCards = buildCards(numberOfCards);
+                    expectedMessage = buildResponseMessage(numberOfCards);
+
+                    mtgFindCmd.parseResponse(responseSpy, JSON.stringify(listOfCards), undefined, expectedUrlParams);
+                });
+
+                it('should return a list of the first 5 cards', function () {
+                    expect(responseSpy.send).to.have.callCount(1);
+                    expect(responseSpy.send).to.have.been.calledWith(expectedMessage);
+
+                    _.forEach(expectedCardNames, function (cardName, index) {
+                        expect(cardName).to.equal(listOfCards[index].name);
+                    });
+                });
+            });
+
+            describe('when response has less than 5 cards', function () {
+                beforeEach(function () {
+                    var numberOfCards = fluki.integer(1, 5);
+
+                    listOfCards = buildCards(numberOfCards);
+                    expectedMessage = buildResponseMessage(numberOfCards);
+
+                    mtgFindCmd.parseResponse(responseSpy, JSON.stringify(listOfCards), undefined, expectedUrlParams);
+                });
+
+                it('should return the entire list of cards', function () {
+                    expect(responseSpy.send).to.have.callCount(1);
+                    expect(responseSpy.send).to.have.been.calledWith(expectedMessage);
+
+                    _.forEach(expectedCardNames, function (cardName, index) {
+                        expect(cardName).to.equal(listOfCards[index].name);
+                    });
                 });
             });
         });
