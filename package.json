@@ -35,7 +35,7 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "coffee-script": "^1.10.0",
-    "fluki": "^1.0.1",
+    "fluki": "^1.2.0",
     "gulp": "^3.9.0",
     "gulp-eslint": "^1.0.0",
     "gulp-istanbul": "^0.10.3",
@@ -46,7 +46,7 @@
     "sinon-chai": "^2.8.0"
   },
   "dependencies": {
-    "lodash": "^3.10.1",
-    "q": "^1.4.1"
+    "async": "^1.5.2",
+    "lodash": "^4.2.1"
   }
 }

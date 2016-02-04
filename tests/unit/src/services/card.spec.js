@@ -1,9 +1,8 @@
 'use strict';
 
-var apiUtil = require('../../../../src/utils/api'),
+var cardService = require('../../../../src/services/card'),
     urlMap = require('../../../../static/consts').urlMap,
 
-    Q = require('q'),
     fluki = require('fluki'),
 
     sinon = require('sinon'),
@@ -15,7 +14,8 @@ var apiUtil = require('../../../../src/utils/api'),
 describe('api utils', function () {
     var sandbox,
         robotStub,
-        headerStub;
+        headerStub,
+        callbackSpy;
 
     function buildRobotStub(error, response, body) {
         headerStub = {
@@ -37,6 +37,8 @@ describe('api utils', function () {
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
+
+        callbackSpy = sandbox.spy();
     });
 
     afterEach(function () {
@@ -45,26 +47,16 @@ describe('api utils', function () {
 
     describe('hasErrorCode', function () {
         it('should return true if it is an error code', function () {
-            expect(apiUtil.hasErrorCode(400)).to.equal(true);
-            expect(apiUtil.hasErrorCode(500)).to.equal(true);
+            expect(cardService.hasErrorCode(400)).to.equal(true);
+            expect(cardService.hasErrorCode(500)).to.equal(true);
         });
 
         it('should return false if it is not an error code', function () {
-            expect(apiUtil.hasErrorCode(fluki.integer(200, 300))).to.equal(false);
+            expect(cardService.hasErrorCode(fluki.integer(200, 300))).to.equal(false);
         });
     });
 
     describe('getRandomMultiverseId', function () {
-        var deferredSpy;
-
-        beforeEach(function () {
-            deferredSpy = {
-                reject: sandbox.spy(),
-                resolve: sandbox.spy()
-            };
-
-            sandbox.stub(Q, 'defer').returns(deferredSpy);
-        });
 
         describe('when a multiverse id is successfully found', function () {
             var expectedMultiverseId;
@@ -78,7 +70,7 @@ describe('api utils', function () {
                     }
                 });
 
-                apiUtil.getRandomMultiverseId(robotStub);
+                cardService.getRandomMultiverseId(robotStub, callbackSpy);
             });
 
             it('should return a multiverse id', function () {
@@ -88,42 +80,30 @@ describe('api utils', function () {
                 expect(headerStub.header).to.have.callCount(1);
                 expect(headerStub.header).to.have.been.calledWith('Accept', 'application/json');
 
-                expect(deferredSpy.resolve).to.have.callCount(1);
-                expect(deferredSpy.resolve).to.have.been.calledWith(expectedMultiverseId);
+                expect(callbackSpy).to.have.callCount(1);
+                expect(callbackSpy).to.have.been.calledWith(expectedMultiverseId);
             });
         });
 
         describe('when there is an error', function () {
-            var expectedError;
-
             beforeEach(function () {
-                expectedError = fluki.string(10);
+                buildRobotStub(fluki.string(10));
 
-                buildRobotStub(expectedError);
-
-                apiUtil.getRandomMultiverseId(robotStub);
+                cardService.getRandomMultiverseId(robotStub, callbackSpy);
             });
 
             it('should return the error', function () {
-                expect(deferredSpy.reject).to.have.callCount(1);
-                expect(deferredSpy.reject).to.have.been.calledWith(expectedError);
+                expect(callbackSpy).to.have.callCount(1);
+                expect(callbackSpy).to.have.been.calledWith(null);
             });
         });
     });
 
     describe('getRandomCard', function () {
-        var deferredSpy,
-            expectedMultiverseId;
+        var expectedMultiverseId;
 
         beforeEach(function () {
             expectedMultiverseId = fluki.string(10);
-
-            deferredSpy = {
-                reject: sandbox.spy(),
-                resolve: sandbox.spy()
-            };
-
-            sandbox.stub(Q, 'defer').returns(deferredSpy);
         });
 
         describe('when a card with a given multiverse id is found', function () {
@@ -135,7 +115,7 @@ describe('api utils', function () {
 
                 buildRobotStub(undefined, undefined, JSON.stringify(expectedResponse));
 
-                apiUtil.getRandomCard(robotStub, expectedMultiverseId);
+                cardService.getRandomCard(robotStub, expectedMultiverseId, callbackSpy);
             });
 
             it('should return a random card', function () {
@@ -145,25 +125,21 @@ describe('api utils', function () {
                 expect(headerStub.header).to.have.callCount(1);
                 expect(headerStub.header).to.have.been.calledWith('Accept', 'application/json');
 
-                expect(deferredSpy.resolve).to.have.callCount(1);
-                expect(deferredSpy.resolve).to.have.been.calledWith(expectedResponse);
+                expect(callbackSpy).to.have.callCount(1);
+                expect(callbackSpy).to.have.been.calledWith(expectedResponse);
             });
         });
 
         describe('when there is an error', function () {
-            var expectedError;
-
             beforeEach(function () {
-                expectedError = fluki.string(10);
+                buildRobotStub(fluki.string(10));
 
-                buildRobotStub(expectedError);
-
-                apiUtil.getRandomCard(robotStub, expectedMultiverseId);
+                cardService.getRandomCard(robotStub, expectedMultiverseId, callbackSpy);
             });
 
             it('should return the error', function () {
-                expect(deferredSpy.reject).to.have.callCount(1);
-                expect(deferredSpy.reject).to.have.been.calledWith(expectedError);
+                expect(callbackSpy).to.have.callCount(1);
+                expect(callbackSpy).to.have.been.calledWith(null);
             });
         });
     });

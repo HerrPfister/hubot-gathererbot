@@ -16,7 +16,7 @@ function getCardPoolSizeString(poolSize) {
 
 function createCardList(cards) {
     var cardSample = cards.slice(0, CARD_LIMIT),
-        cardSampleNames = _.pluck(cardSample, 'name');
+        cardSampleNames = _.map(cardSample, 'name');
 
     return cardSampleNames.join('\n');
 }
@@ -29,7 +29,7 @@ function createGathererUrl(urlParams) {
 }
 
 function findCard(cards, cardName) {
-    return _.find(cards, function (card) {
+    return !cardName ? undefined : _.find(cards, function (card) {
         return cardName.toLowerCase() === card.name.toLowerCase();
     });
 }
@@ -37,7 +37,7 @@ function findCard(cards, cardName) {
 function parseResponse(robo, body, cardName, urlParams) {
     var cardDetails,
         cards = JSON.parse(body),
-        card = findCard(cards, cardName || '');
+        card = findCard(cards, cardName);
 
     if (!cards.length) {
         robo.send(consts.findError);
@@ -56,6 +56,6 @@ function parseResponse(robo, body, cardName, urlParams) {
 }
 
 module.exports = {
-    parseCommandError: parseCommandError,
-    parseResponse: parseResponse
+    parseCommandError : parseCommandError,
+    parseResponse : parseResponse
 };

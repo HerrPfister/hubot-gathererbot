@@ -1,46 +1,31 @@
-var Q = require('q'),
-    _ = require('lodash'),
+var _ = require('lodash'),
 
     consts = require('../../static/consts'),
     urlMap = consts.urlMap,
     responseErrorCodes = consts.responseErrorCodes;
 
-function getRandomCard(robot, multiverseId) {
-    var deferred = Q.defer();
-
+function getRandomCard(robot, multiverseId, callback) {
     robot.http(urlMap.deckBrewPrefix + 'multiverseId=' + multiverseId)
         .header('Accept', 'application/json')
-        .get()(function(err, res, body){
+        .get()(function (err, res, body) {
             if (err) {
-                deferred.reject(err);
+                callback(null);
             } else {
-                deferred.resolve(JSON.parse(body));
+                callback(JSON.parse(body));
             }
         });
-
-    return deferred.promise;
 }
 
-function getRandomMultiverseId(robot) {
-    var deferred = Q.defer();
-
+function getRandomMultiverseId(robot, callback) {
     robot.http(urlMap.gathererRandom)
         .header('Accept', 'application/json')
-        .get()(function(err, res){
-            var location,
-                multiverseId;
-
+        .get()(function (err, res) {
             if (err) {
-                deferred.reject(err);
+                callback(null);
             } else {
-                location = res.headers.location;
-                multiverseId = location.split('=')[1];
-
-                deferred.resolve(multiverseId);
+                callback(res.headers.location.split('=')[1]);
             }
         });
-
-    return deferred.promise;
 }
 
 function hasErrorCode(statusCode) {
