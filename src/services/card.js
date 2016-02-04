@@ -9,9 +9,9 @@ function getRandomCard(robot, multiverseId, callback) {
         .header('Accept', 'application/json')
         .get()(function (err, res, body) {
             if (err) {
-                callback(null);
+                callback(err, null);
             } else {
-                callback(JSON.parse(body));
+                callback(err, JSON.parse(body));
             }
         });
 }
@@ -21,9 +21,9 @@ function getRandomMultiverseId(robot, callback) {
         .header('Accept', 'application/json')
         .get()(function (err, res) {
             if (err) {
-                callback(null);
+                callback(err, null);
             } else {
-                callback(res.headers.location.split('=')[1]);
+                callback(err, res.headers.location.split('=')[1]);
             }
         });
 }
