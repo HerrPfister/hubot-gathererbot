@@ -14,77 +14,108 @@
 // Author:
 //   HerrPfister and wickerpopstar
 
-
-var apiUtils = require('./utils/api'),
+var cardService = require('./services/card'),
     cardUtils = require('./utils/card'),
     urlUtils = require('./utils/url'),
+
     mtgFind = require('./commands/mtg-find'),
     mtgClash = require('./commands/mtg-clash'),
     mtgRandom = require('./commands/mtg-random'),
-    urlMap = require('../static/consts').urlMap,
 
-    Q = require('q');
+    async = require('async');
 
-function find(robot, chat) {
-    var cardName = cardUtils.getCardName(chat.match[1]),
-        urlParams = urlUtils.convertUserInputToUrlParams(chat.match[1]);
+function resolveClash(chat, cards) {
+    var challenger = {
+            name : chat.message.user.name,
+            card : cards[0]
+        },
+        challenged = {
+            name : chat.match[1],
+            card : cards[1]
+        };
 
-    robot.http(urlMap.deckBrewPrefix + urlParams)
-        .header('Accept', 'application/json')
-        .get()(function (err, res, body) {
-            if (err) {
-                chat.send(consts.defaultError);
-
-            } else if (apiUtils.hasErrorCode(res.statusCode)) {
-                mtgFind.parseCommandError(chat, err);
-
-            } else {
-                mtgFind.parseResponse(chat, body, cardName, urlParams);
-            }
-        });
+    mtgClash.resolveClash(chat, challenger, challenged);
 }
 
-function random(robot, chat) {
-    apiUtils.getRandomMultiverseId(robot)
-        .then(function (multiverseId) {
-            return apiUtils.getRandomCard(robot, multiverseId);
-        })
-        .done(function (card) {
-            mtgRandom.parseResponse(chat, card);
-        });
+function getCards(robot, chat, multiverseIds) {
+    async.parallel(
+        [
+            function (callback) {
+                cardService.getRandomCard(robot, multiverseIds[0], callback);
+            },
+            function (callback) {
+                cardService.getRandomCard(robot, multiverseIds[1], callback);
+            }
+        ],
+        function (err, response) {
+            if (!err) {
+                resolveClash(chat, response);
+            } else {
+                robot.send(consts.defaultError);
+            }
+        }
+    );
 }
 
 function clash(robot, chat) {
-        var randomMultiverseIds = [
-            apiUtils.getRandomMultiverseId(robot),
-            apiUtils.getRandomMultiverseId(robot)
-        ];
+    async.parallel(
+        [
+            function (callback) {
+                cardService.getRandomMultiverseId(robot, callback);
+            },
+            function (callback) {
+                cardService.getRandomMultiverseId(robot, callback);
+            }
+        ],
+        function (err, response) {
+            if (!err) {
+                getCards(robot, chat, response);
+            } else {
+                robot.send(consts.defaultError);
+            }
+        }
+    );
+}
 
-        Q.all(randomMultiverseIds)
-            .done(function (multiverseIds) {
-                var randomCards = [
-                  apiUtils.getRandomCard(robot, multiverseIds[0]),
-                  apiUtils.getRandomCard(robot, multiverseIds[1])
-                ];
+function findCard(robot, chat) {
+    var cardName = cardUtils.getCardName(chat.match[1]),
+        urlParams = urlUtils.convertUserInputToUrlParams(chat.match[1]);
 
-                Q.all(randomCards)
-                    .done(function (cards) {
-                        var challenger = {
-                            name: chat.message.user.name,
-                            card: cards[0]
-                        },
-                        challenged = {
-                            name: chat.match[1],
-                            card: cards[1]
-                        };
+    cardService.getCard(robot, urlParams, function (err, res, body) {
+        if (err) {
+            chat.send(consts.defaultError);
 
-                        mtgClash.resolveClash(chat, challenger, challenged);
-                    });
-            });
+        } else if (cardService.hasErrorCode(res.statusCode)) {
+            mtgFind.parseCommandError(chat, err);
+
+        } else {
+            mtgFind.parseResponse(chat, body, cardName, urlParams);
+        }
+    });
+}
+
+function randomCard(robot, chat) {
+    async.waterfall(
+        [
+            function (callback) {
+                cardService.getRandomMultiverseId(robot, callback);
+            },
+            function (multiverseId, callback) {
+                cardService.getRandomCard(robot, multiverseId, callback);
+            }
+        ],
+        function (err, response) {
+            if (!err) {
+                mtgRandom.parseResponse(chat, response);
+            } else {
+                robot.send(err);
+            }
+        }
+    );
 }
 
 module.exports = function (robot) {
-    robot.respond(/mtg\s+clash\s+(@\w+)/i, clash.bind(this, robot));
-    robot.respond(/mtg\s+random/i, random.bind(this, robot));
-    robot.respond(/mtg\s+find\s+(.*)/i, find.bind(this, robot));
+    robot.respond(/mtg\s+clash\s+(.*)/i, clash.bind(this, robot));
+    robot.respond(/mtg\s+find\s+(.*)/i, findCard.bind(this, robot));
+    robot.respond(/mtg\s+random/i, randomCard.bind(this, robot));
 };

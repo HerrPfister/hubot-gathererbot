@@ -11,12 +11,14 @@ function parseCommandError(robo) {
 }
 
 function getCardPoolSizeString(poolSize) {
-    return 'Displaying ' + CARD_LIMIT + ' out of ' + poolSize + ' cards:';
+    var limit = poolSize < 5 ? poolSize : CARD_LIMIT;
+
+    return 'Displaying ' + limit + ' out of ' + poolSize + ' cards:';
 }
 
 function createCardList(cards) {
     var cardSample = cards.slice(0, CARD_LIMIT),
-        cardSampleNames = _.pluck(cardSample, 'name');
+        cardSampleNames = _.map(cardSample, 'name');
 
     return cardSampleNames.join('\n');
 }
@@ -29,20 +31,21 @@ function createGathererUrl(urlParams) {
 }
 
 function findCard(cards, cardName) {
-    return _.find(cards, function (card) {
+    return !cardName ? undefined : _.find(cards, function (card) {
         return cardName.toLowerCase() === card.name.toLowerCase();
     });
 }
 
 function parseResponse(robo, body, cardName, urlParams) {
     var cardDetails,
-        cards = JSON.parse(body);
+        cards = JSON.parse(body),
+        card = findCard(cards, cardName);
 
     if (!cards.length) {
         robo.send(consts.findError);
 
-    } else if (cardName) {
-        cardDetails = cardUtils.getCardDetails(findCard(cards, cardName));
+    } else if (card) {
+        cardDetails = cardUtils.getCardDetails(card);
         cardUtils.sendDetails(robo, cardDetails);
 
     } else {
@@ -55,6 +58,6 @@ function parseResponse(robo, body, cardName, urlParams) {
 }
 
 module.exports = {
-    parseCommandError: parseCommandError,
-    parseResponse: parseResponse
+    parseCommandError : parseCommandError,
+    parseResponse : parseResponse
 };
