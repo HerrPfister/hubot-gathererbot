@@ -1,11 +1,12 @@
 var _ = require('lodash'),
 
     consts = require('../../static/consts'),
+
     urlMap = consts.urlMap,
     responseErrorCodes = consts.responseErrorCodes;
 
 function getRandomCard(robot, multiverseId, callback) {
-    robot.http(urlMap.deckBrewPrefix + 'multiverseId=' + multiverseId)
+    robot.http(urlMap.gathererMultiverseId + multiverseId)
         .header('Accept', 'application/json')
         .get()(function (err, res, body) {
             if (err) {
@@ -28,11 +29,18 @@ function getRandomMultiverseId(robot, callback) {
         });
 }
 
+function getCard(robot, urlParams, callback) {
+    robot.http(urlMap.deckBrewPrefix + urlParams)
+        .header('Accept', 'application/json')
+        .get()(callback);
+}
+
 function hasErrorCode(statusCode) {
     return _.includes(responseErrorCodes, statusCode);
 }
 
 module.exports = {
+    getCard: getCard,
     getRandomCard: getRandomCard,
     getRandomMultiverseId: getRandomMultiverseId,
     hasErrorCode: hasErrorCode

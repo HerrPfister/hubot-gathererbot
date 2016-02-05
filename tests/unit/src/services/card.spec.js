@@ -11,13 +11,13 @@ var cardService = require('../../../../src/services/card'),
     chai = require('chai'),
     expect = chai.expect;
 
-describe('api utils', function () {
+describe('Card Service', function () {
     var sandbox,
         robotStub,
         headerStub,
         callbackSpy;
 
-    function buildRobotStub(error, response, body) {
+    function buildStubs(error, response, body) {
         headerStub = {
             header: sandbox.stub().returns({
                 get: sandbox.stub().returns(
@@ -62,11 +62,11 @@ describe('api utils', function () {
             var expectedMultiverseId;
 
             beforeEach(function () {
-                expectedMultiverseId = fluki.string();
+                expectedMultiverseId = fluki.string(10);
 
-                buildRobotStub(undefined, {
+                buildStubs(null, {
                     headers: {
-                        location: fluki.string() + '=' + expectedMultiverseId
+                        location: fluki.string(10) + '=' + expectedMultiverseId
                     }
                 });
 
@@ -81,20 +81,23 @@ describe('api utils', function () {
                 expect(headerStub.header).to.have.been.calledWith('Accept', 'application/json');
 
                 expect(callbackSpy).to.have.callCount(1);
-                expect(callbackSpy).to.have.been.calledWith(expectedMultiverseId);
+                expect(callbackSpy).to.have.been.calledWith(null, expectedMultiverseId);
             });
         });
 
         describe('when there is an error', function () {
+            var expectedError;
+
             beforeEach(function () {
-                buildRobotStub(fluki.string(10));
+                expectedError = fluki.string(10);
+                buildStubs(expectedError);
 
                 cardService.getRandomMultiverseId(robotStub, callbackSpy);
             });
 
             it('should return the error', function () {
                 expect(callbackSpy).to.have.callCount(1);
-                expect(callbackSpy).to.have.been.calledWith(null);
+                expect(callbackSpy).to.have.been.calledWith(expectedError, null);
             });
         });
     });
@@ -113,33 +116,88 @@ describe('api utils', function () {
                 expectedResponse = {};
                 expectedResponse[fluki.string(10)] = fluki.string(10);
 
-                buildRobotStub(undefined, undefined, JSON.stringify(expectedResponse));
+                buildStubs(null, null, JSON.stringify(expectedResponse));
 
                 cardService.getRandomCard(robotStub, expectedMultiverseId, callbackSpy);
             });
 
             it('should return a random card', function () {
                 expect(robotStub.http).to.have.callCount(1);
-                expect(robotStub.http).to.have.been.calledWith(urlMap.deckBrewPrefix + 'multiverseId=' + expectedMultiverseId);
+                expect(robotStub.http).to.have.been.calledWith(urlMap.gathererMultiverseId + expectedMultiverseId);
 
                 expect(headerStub.header).to.have.callCount(1);
                 expect(headerStub.header).to.have.been.calledWith('Accept', 'application/json');
 
                 expect(callbackSpy).to.have.callCount(1);
-                expect(callbackSpy).to.have.been.calledWith(expectedResponse);
+                expect(callbackSpy).to.have.been.calledWith(null, expectedResponse);
             });
         });
 
         describe('when there is an error', function () {
+            var expectedError;
+
             beforeEach(function () {
-                buildRobotStub(fluki.string(10));
+                expectedError = fluki.string(10);
+                buildStubs(expectedError);
 
                 cardService.getRandomCard(robotStub, expectedMultiverseId, callbackSpy);
             });
 
             it('should return the error', function () {
                 expect(callbackSpy).to.have.callCount(1);
-                expect(callbackSpy).to.have.been.calledWith(null);
+                expect(callbackSpy).to.have.been.calledWith(expectedError, null);
+            });
+        });
+    });
+
+    describe('getCard', function () {
+        var urlParams;
+
+        beforeEach(function () {
+            urlParams = fluki.string(10);
+        });
+
+        describe('when a card with a given name is found', function () {
+            var expectedBody,
+                expectedUrlParams;
+
+            beforeEach(function () {
+                expectedBody = {};
+                expectedBody[fluki.string(10)] = fluki.string(10);
+                expectedBody = JSON.stringify(expectedBody);
+
+                expectedUrlParams = fluki.string(10);
+
+                buildStubs(null, null, expectedBody);
+
+                cardService.getCard(robotStub, expectedUrlParams, callbackSpy);
+            });
+
+            it('should return the named card', function () {
+                expect(robotStub.http).to.have.callCount(1);
+                expect(robotStub.http).to.have.been.calledWith(urlMap.deckBrewPrefix + expectedUrlParams);
+
+                expect(headerStub.header).to.have.callCount(1);
+                expect(headerStub.header).to.have.been.calledWith('Accept', 'application/json');
+
+                expect(callbackSpy).to.have.callCount(1);
+                expect(callbackSpy).to.have.been.calledWith(null, null, expectedBody);
+            });
+        });
+
+        describe('when there is an error', function () {
+            var expectedError;
+
+            beforeEach(function () {
+                expectedError = fluki.string(10);
+                buildStubs(expectedError, null, null);
+
+                cardService.getCard(robotStub, fluki.string(10), callbackSpy);
+            });
+
+            it('should return the error', function () {
+                expect(callbackSpy).to.have.callCount(1);
+                expect(callbackSpy).to.have.been.calledWith(expectedError, null, null);
             });
         });
     });

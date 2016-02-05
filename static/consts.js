@@ -8,6 +8,7 @@ module.exports = {
     ],
     urlMap: {
         deckBrewPrefix: 'https://api.deckbrew.com/mtg/cards?',
+        gathererMultiverseId: 'https://api.deckbrew.com/mtg/cards?multiverseid=',
         gatherer: 'http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=',
         gathererAdvanced: 'http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&',
         gathererRandom: 'http://gatherer.wizards.com/Pages/Card/Details.aspx?action=random'

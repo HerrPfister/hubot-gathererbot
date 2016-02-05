@@ -22,8 +22,6 @@ var cardService = require('./services/card'),
     mtgClash = require('./commands/mtg-clash'),
     mtgRandom = require('./commands/mtg-random'),
 
-    urlMap = require('../static/consts').urlMap,
-
     async = require('async');
 
 function resolveClash(chat, cards) {
@@ -52,6 +50,8 @@ function getCards(robot, chat, multiverseIds) {
         function (err, response) {
             if (!err) {
                 resolveClash(chat, response);
+            } else {
+                robot.send(consts.defaultError);
             }
         }
     );
@@ -70,6 +70,8 @@ function clash(robot, chat) {
         function (err, response) {
             if (!err) {
                 getCards(robot, chat, response);
+            } else {
+                robot.send(consts.defaultError);
             }
         }
     );
@@ -79,7 +81,7 @@ function findCard(robot, chat) {
     var cardName = cardUtils.getCardName(chat.match[1]),
         urlParams = urlUtils.convertUserInputToUrlParams(chat.match[1]);
 
-    robot.http(urlMap.deckBrewPrefix + urlParams).header('Accept', 'application/json').get()(function (err, res, body) {
+    cardService.getCard(robot, urlParams, function (err, res, body) {
         if (err) {
             chat.send(consts.defaultError);
 
