@@ -65,7 +65,7 @@ describe('url utils', function () {
                     expectedValues.push(randomValue);
                 });
 
-                return userInput.join(',');
+                return userInput.join(';');
             }
 
             beforeEach(function () {
@@ -132,8 +132,8 @@ describe('url utils', function () {
             it('should return converted url params', function () {
                 var gathererParams = actualGathererParams.split('&');
 
-                expect(gathererParams).to.include(expectedGathererColorKey + '[' + expectedColor + ']');
-                expect(gathererParams).to.include(expectedGathererRarityKey + '[' + expectedRarity + ']');
+                expect(gathererParams).to.include(expectedGathererColorKey + '%5B' + expectedColor + '%5D');
+                expect(gathererParams).to.include(expectedGathererRarityKey + '%5B' + expectedRarity + '%5D');
             });
         });
 

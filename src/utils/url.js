@@ -46,6 +46,14 @@ function convertUrlParamsToGathererParams(urlParams) {
     return _.map(params, toGathererParams).join('&');
 }
 
+function buildArrayParams(params) {
+    var paramParts = params.split('='),
+        key = paramParts[0],
+        values = paramParts[1];
+
+    return key + '=' + values.replace(',', '&' + key + '=');
+}
+
 function convertUserInputToUrlParams(userInput) {
     var params,
         trimmedParams;
@@ -57,10 +65,12 @@ function convertUserInputToUrlParams(userInput) {
         return 'name=' + userInput;
 
     } else {
-        params = userInput.split(',');
+        params = userInput.split(';');
 
         trimmedParams = _.map(params, function (param) {
-            return param.trim();
+            var newParams = param.trim();
+
+            return newParams.indexOf(',') !== -1 ? buildArrayParams(newParams) : newParams;
         });
 
         return trimmedParams.join('&');
