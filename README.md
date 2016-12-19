@@ -25,23 +25,48 @@ View in Gatherer: http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverse
 
 ```
 Format:
-[bot] mtg find [search param1]=[search value1], [search param2]=[search value2] ...
+[bot] mtg find [search param1]=[search value1]; [search param2]=[search value2] ...
 
 Example:
-examplebot mtg find oracle=intimidate, color=red ...
+examplebot mtg find oracle="haste"
 
 ```
+
 **Sample output:**
 
 ```
-Displaying 5 out of 7 cards:
-Academy Raider
-Akroan Line Breaker
-Bladetusk Boar
-Cyclops Tyrant
-Heirs of Stromkirk
-View in Gatherer: http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&text=+[intimidate]&color=+[r]
+Displaying 5 out of 100 cards:
+Accelerate | red | instant
+"Ach! Hans, Run!" | green red | enchantment
+Act of Aggression | red | instant
+Act of Treason | red | sorcery
+Aeon Chronicler | blue | creature - avatar
+View in Gatherer: http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&text=+%5B%22haste%22%5D
 ```
+
+**If you want to search by multiple values of a given parameter, you can do it like so:**
+
+```
+Format:
+[bot] mtg find [search param1]=[search value1],[search value2] ...
+
+Example:
+examplebot mtg find color=red,green
+```
+
+**Sample output:**
+
+```
+Displaying 5 out of 19 cards:
+Accelerate | red | instant
+Act of Aggression | red | instant
+Blind with Anger | red | instant - arcane
+Cauldron Dance | black red | instant
+Chaos Charm | red | instant
+View in Gatherer: http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&type=+%5Binstant%5D&color=+%5BR%5D&color=+%5BG%5D&text=+%5Bhaste%5D
+```
+
+_**Note:** When you search this way the given parameter will equate to an **OR** clause. So the above would be "All cards that are red **OR** green"_
 
 #### Possible Search Parameters
 
@@ -86,6 +111,7 @@ Format:
 Example:
 examplebot mtg clash @Matt
 ```
+
 **Sample output with a winner:**
 
 ```
@@ -94,6 +120,7 @@ examplebot mtg clash @Matt
 @matt drew Butcher of Malakir, which has a converted mana cost of 7.
 Clash resolved! @matt is the winner!
 ```
+
 **Sample output when there is a tie:**
 
 ```
