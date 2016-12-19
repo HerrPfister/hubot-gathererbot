@@ -28,7 +28,7 @@ Format:
 [bot] mtg find [search param1]=[search value1]; [search param2]=[search value2] ...
 
 Example:
-examplebot mtg find oracle="haste"
+examplebot mtg find oracle=haste; color=red
 
 ```
 
@@ -40,7 +40,7 @@ Accelerate | red | instant
 "Ach! Hans, Run!" | green red | enchantment
 Act of Aggression | red | instant
 Act of Treason | red | sorcery
-Aeon Chronicler | blue | creature - avatar
+Akki Drillmaster | red | creature - goblin shaman
 View in Gatherer: http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&text=+%5B%22haste%22%5D
 ```
 
