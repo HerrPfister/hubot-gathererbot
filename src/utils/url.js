@@ -4,6 +4,14 @@ var _ = require('lodash'),
     colorMapper = require('../mappers/color'),
     rarityMapper = require('../mappers/rarity');
 
+function toWrappedParam(value) {
+    return '[' + value + ']';
+}
+
+function formatValue(value) {
+    return value.split(' ').map(toWrappedParam).join('+');
+}
+
 function createMappedUrlParam(parsedKey, parsedValue) {
     var mappedValue,
         mappedKey = gathererKeyMapper.map(parsedKey);
@@ -13,7 +21,7 @@ function createMappedUrlParam(parsedKey, parsedValue) {
     } else if (parsedKey === 'rarity') {
         mappedValue = rarityMapper.map(parsedValue);
     } else {
-        mappedValue = parsedValue;
+        mappedValue = formatValue(parsedValue);
     }
 
     return mappedKey + '[' + mappedValue + ']';

@@ -26,7 +26,7 @@ describe('mtg find command', function () {
         sandbox = sinon.sandbox.create();
 
         responseSpy = {
-            send : sandbox.stub()
+            send: sandbox.stub()
         };
     });
 
@@ -56,15 +56,27 @@ describe('mtg find command', function () {
             var cards = [];
 
             _.times(cardCount, function (count) {
-                var cardName = fluki.string(10);
+                var cardName = fluki.string(10),
+                    types = fluki.array(),
+                    subtypes = fluki.array(),
+                    supertypes = fluki.array(),
+                    colors = fluki.array();
 
                 cards.push({
-                    name : cardName
+                    colors: colors,
+                    name: cardName,
+                    types: types,
+                    subtypes: subtypes,
+                    supertypes: supertypes
                 });
 
                 if (count < 5) {
                     expectedCardNames.push(cardName);
-                    expectedCardNameMessage += cardName + '\n';
+                    expectedCardNameMessage += cardName + ' | ' +
+                        colors.join(' ') + ' | ' +
+                        supertypes.join(' ') + ' ' +
+                        types.join(' ') + ' - ' +
+                        subtypes.join(' ') + '\n';
                 }
             });
 

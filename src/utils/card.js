@@ -32,14 +32,17 @@ function getCardDetails(card) {
         gathererText = cardEdition ? 'View in Gatherer: ' + urlMap.gatherer + cardEdition.multiverse_id : undefined;
 
     return {
-        attributes : attributes,
-        cardImage : cardImage,
-        cost : card.cost,
-        gathererText : gathererText,
-        name : card.name,
-        subtypes : card.subtypes,
-        text : card.text,
-        types : card.types
+        edition: cardEdition,
+        attributes: attributes,
+        cardImage: cardImage,
+        colors: card.colors,
+        cost: card.cost,
+        gathererText: gathererText,
+        name: card.name,
+        subtypes: card.subtypes,
+        supertypes: card.supertypes,
+        text: card.text,
+        types: card.types
     };
 }
 
@@ -69,7 +72,7 @@ function sendDetails(res, cardDetails) {
 }
 
 module.exports = {
-    getCardName : getCardName,
-    getCardDetails : getCardDetails,
-    sendDetails : sendDetails
+    getCardName: getCardName,
+    getCardDetails: getCardDetails,
+    sendDetails: sendDetails
 };

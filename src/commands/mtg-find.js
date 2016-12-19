@@ -18,7 +18,17 @@ function getCardPoolSizeString(poolSize) {
 
 function createCardList(cards) {
     var cardSample = cards.slice(0, CARD_LIMIT),
-        cardSampleNames = _.map(cardSample, 'name');
+        cardSampleNames = _.map(cardSample, function (card) {
+            var details = cardUtils.getCardDetails(card);
+
+            return (
+                details.name + ' | ' +
+                details.colors.join(' ') + ' | ' +
+                details.supertypes.join(' ') + ' ' +
+                details.types.join(' ') + ' - ' +
+                details.subtypes.join(' ')
+            );
+        });
 
     return cardSampleNames.join('\n');
 }
@@ -58,6 +68,6 @@ function parseResponse(robo, body, cardName, urlParams) {
 }
 
 module.exports = {
-    parseCommandError : parseCommandError,
-    parseResponse : parseResponse
+    parseCommandError: parseCommandError,
+    parseResponse: parseResponse
 };
