@@ -16,19 +16,25 @@ function getCardPoolSizeString(poolSize) {
     return 'Displaying ' + limit + ' out of ' + poolSize + ' cards:';
 }
 
+function buildTypesSubstring(details) {
+    var supertypes = details.supertypes ? details.supertypes.join(' ') + ' ' : '',
+        types = details.types ? details.types.join(' ') : '',
+        subtypes = details.subtypes ? ' - ' + details.subtypes.join(' ') : '';
+
+    return supertypes + types + subtypes;
+}
+
+function buildSampleName(card) {
+    var details = cardUtils.getCardDetails(card),
+        colors = details.colors.join(' '),
+        name = details.name;
+
+    return name + ' | ' + colors + ' | ' + buildTypesSubstring(details);
+}
+
 function createCardList(cards) {
     var cardSample = cards.slice(0, CARD_LIMIT),
-        cardSampleNames = _.map(cardSample, function (card) {
-            var details = cardUtils.getCardDetails(card);
-
-            return (
-                details.name + ' | ' +
-                details.colors.join(' ') + ' | ' +
-                details.supertypes.join(' ') + ' ' +
-                details.types.join(' ') + ' - ' +
-                details.subtypes.join(' ')
-            );
-        });
+        cardSampleNames = _.map(cardSample, buildSampleName);
 
     return cardSampleNames.join('\n');
 }

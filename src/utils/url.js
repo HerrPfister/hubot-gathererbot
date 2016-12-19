@@ -17,14 +17,14 @@ function createMappedUrlParam(parsedKey, parsedValue) {
         mappedKey = gathererKeyMapper.map(parsedKey);
 
     if (parsedKey === 'color') {
-        mappedValue = colorMapper.map(parsedValue);
+        mappedValue = toWrappedParam(colorMapper.map(parsedValue));
     } else if (parsedKey === 'rarity') {
-        mappedValue = rarityMapper.map(parsedValue);
+        mappedValue = toWrappedParam(rarityMapper.map(parsedValue));
     } else {
         mappedValue = formatValue(parsedValue);
     }
 
-    return mappedKey + '[' + mappedValue + ']';
+    return encodeURI(mappedKey + mappedValue);
 }
 
 function toGathererParams(param) {
