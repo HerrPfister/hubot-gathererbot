@@ -1,10 +1,10 @@
 # gathererbot
 
-A simple hubot that queries the [deckbrew](https://deckbrew.com/api/) service for Magic the Gathering cards.
+A simple hubot that uses the [mtg-sdk](https://magicthegathering.io/) for Magic the Gathering cards.
 
 ## Searching for cards
 
-**You can search by just the card's name, like so:**
+**You can search for a specific card by name, like so:**
 
 ```
 Format:
@@ -17,73 +17,50 @@ examplebot mtg find shatter
 **Sample output:**
 
 ```
-https://image.deckbrew.com/mtg/multiverseid/83257.jpg
-View in Gatherer: http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=83257
+http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=185053&type=card
+View it in the gatherer: http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=185053
 ```
 
 **You can also search by a series of parameters, like so:**
 
 ```
 Format:
-[bot] mtg find [search param1]=[search value1]; [search param2]=[search value2] ...
+[bot] mtg query [search param1]=[search value1] & [search param2]=[search value1],[search value2]|[search value3] ...
 
 Example:
-examplebot mtg find oracle=haste; color=red
+examplebot mtg query subTypes=elf&colors=g,r
+
+Query:
+search for all elf cards that are green OR green AND red
 
 ```
 
 **Sample output:**
 
 ```
-Displaying 5 out of 100 cards:
-Accelerate | red | instant
-"Ach! Hans, Run!" | green red | enchantment
-Act of Aggression | red | instant
-Act of Treason | red | sorcery
-Akki Drillmaster | red | creature - goblin shaman
-View in Gatherer: http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&text=+%5B%22haste%22%5D
+Bloodbraid Elf | {2}{R}{G} | Creature — Elf Berserker
+Cylian Sunsinger | {1}{G} | Creature — Elf Shaman
+Druid of the Anima | {1}{G} | Creature — Elf Druid
+Godtracker of Jund | {1}{R}{G} | Creature — Elf Shaman
+Knotvine Mystic | {R}{G}{W} | Creature — Elf Druid
+View it in the gatherer: http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&subtype=%7C%5Belf%5D&color=%7C%5Bg%5D+%5Br%5D
 ```
 
-**If you want to search by multiple values of a given parameter, you can do it like so:**
-
-```
-Format:
-[bot] mtg find [search param1]=[search value1],[search value2] ...
-
-Example:
-examplebot mtg find color=red,green
-```
-
-**Sample output:**
-
-```
-Displaying 5 out of 19 cards:
-Accelerate | red | instant
-Act of Aggression | red | instant
-Blind with Anger | red | instant - arcane
-Cauldron Dance | black red | instant
-Chaos Charm | red | instant
-View in Gatherer: http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced&type=+%5Binstant%5D&color=+%5BR%5D&color=+%5BG%5D&text=+%5Bhaste%5D
-```
-
-_**Note:** When you search this way the given parameter will equate to an **OR** clause. So the above would be "All cards that are red **OR** green"_
+__NOTE: To use an `OR` clause separate values with a `|`, to get an `AND` clause separate values with a `,`__
+__NOTE: Colors use single letter representation: green = g, black = b, red = r, white = q, blue = u__
 
 #### Possible Search Parameters
 
-Name |	Type |	Description
----- | ----- | ------------
-color      |string| Select cards with the chosen color.
-format       |string| Only show cards allowed in a specific format. Legal values are vintage, legacy, modern, standard, and commander
-multicolor   |bool| Only show cards that are multicolored. Legal values are true and false.
-multiverseid |string| Select cards that have at least one edition with the given Multiverse ID.
-name       |string| A fuzzy match on a card's name.
-oracle       |string| A fuzzy match on a card's Oracle rules text.
-rarity       |string| Select cards printed at this rarity. Options are common, uncommon, rare and mythic.
-set          |string| A three letter identifier for a Magic set, such as "ZEN" for the send Zendikar set.
-status       |string| Only show cards with the given status. Legal values are legal, banned or restricted.
-subtype      |string| Any valid card subtype. Possible values include zombie, goblin, or other tribal subtypes.
-supertype  |string| Any valid card supertype, such as legendary.
-type	     |string|	Any valid card type. Possible options include enchantment, instant, sorcery, creature, and artifact.
+Name | Type  |	List? | Description
+---- | ----- |  ----- | -----------
+colors       |string| true|   Select cards with the chosen color.
+cmc          |string| true|   Select cards with the chosen converted mana cost.
+name         |string| false|  A fuzzy match on a card's name.
+oracle       |string| false|  A fuzzy match on a card's Oracle rules text.
+rarity       |string| false|  Select cards printed at this rarity. Options are common, uncommon, rare and mythic.
+subTypes     |string| true|   Any valid card sub-type. such as zombie, goblin, and etc.
+superTypes   |string| true|   Any valid card super-type, such as legendary, and etc.
+types	     |string| true|   Any valid card type. such as enchantment, instant, and etc.
 
 ## Getting a random card
 
@@ -96,8 +73,8 @@ type	     |string|	Any valid card type. Possible options include enchantment, in
 **Sample output:**
 
 ```
-https://image.deckbrew.com/mtg/multiverseid/34244.jpg
-View in Gatherer: http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=34244
+http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=253653&type=card
+View it in the gatherer: http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=253653
 ```
 
 ## Settle a dispute with clash!
@@ -133,7 +110,6 @@ It's a draw!
 ## Notes
 
 * All cards that are retrieved will also be printed with a link to Wizards of the Coast's gatherer web service.
-* The advanced find command requires that all search params be separated by a comma. If they are not, it will output an error.
 
 ## Testing
 
