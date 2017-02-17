@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var mtg = require('mtgsdk');
 var gatherer = require('../utils/gatherer');
 
@@ -6,11 +7,12 @@ function findCard(robot) {
 
     mtg.card.where({ name: name })
         .then(function (cards) {
-            var emptyMessage = 'I\'m sorry we could not find a card with the name ' + name + '.';
+            var emptyMessage = 'I\'m sorry we could not find a card with the name ' + name + '.',
+                card = _.find(cards, function (c) { return c.imageUrl && c.name.toLowerCase() === name.toLowerCase() });
 
-            if (cards.length > 0 && cards[0].name.toLowerCase() === name) {
-                robot.send(cards[0].imageUrl);
-                robot.send(gatherer.buildMultiverseIdQuery(cards[0].multiverseid))
+            if (card) {
+                robot.send(card.imageUrl);
+                robot.send(gatherer.buildMultiverseIdQuery(card.multiverseid));
             } else {
                 robot.send(emptyMessage);
             }
