@@ -16,17 +16,21 @@
 //   hubot mtg clash [@handler]
 //         - This command will get two random cards and then compare their converted mana costs to see which is higher.
 //
+//   hubot mtg term [term]
+//         - This command will get the definition of a magic term. For instance, trample.
 // Author:
 //   HerrPfister
 
 var clash = require('./commands/clash'),
     findCard = require('./commands/find'),
     queryCards = require('./commands/query'),
-    randomCard = require('./commands/random');
+    randomCard = require('./commands/random'),
+    term = require('./commands/term');
 
 module.exports = function (robot) {
     robot.respond(/mtg\s+clash\s+(.*)/i, clash);
     robot.respond(/mtg\s+query\s+(.*)/i, queryCards);
     robot.respond(/mtg\s+find\s+(.*)/i, findCard);
+    robot.respond(/mtg\s+term\s+(.*)/i, term);
     robot.respond(/mtg\s+random/i, randomCard);
 };
