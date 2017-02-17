@@ -35,7 +35,7 @@ module.exports = {
         var paramsQuery = Object.keys(params).map(function (key) {
             switch(key) {
                 case 'cmc':
-                    return 'type=|{value}'.replace('{value}', buildComplexParam(params[key], false));
+                    return 'cmc=|["{value}"]'.replace('{value}', params[key]);
                 case 'name':
                     return 'name=|["{value}"]'.replace('{value}', params[key]);
                 case 'text':
