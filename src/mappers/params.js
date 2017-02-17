@@ -1,5 +1,5 @@
 var map = {
-    colors: 'colors',
+    colors: 'colorIdentity',
     name: 'name',
     oracle: 'text',
     rarity: 'rarity',

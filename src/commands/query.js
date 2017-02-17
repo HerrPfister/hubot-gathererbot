@@ -23,6 +23,7 @@ function buildQuery(userInput) {
     }
 
     query.pageSize = 5;
+    query.orderBy = 'mutliverseid';
 
     return query;
 }
@@ -46,7 +47,6 @@ function findAllCards(query, robot) {
             }
         })
         .catch(function (err) {
-            console.log(JSON.stringify(err));
             robot.send('Something went wrong getting cards with those parameters. Please try again later.');
         });
 }
