@@ -1,6 +1,6 @@
 {
   "name": "gathererbot",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "description": "A simple hubot that can look up mtg cards",
   "main": "index.js",
   "scripts": {
