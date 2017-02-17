@@ -54,7 +54,7 @@ __NOTE: Colors use single letter representation: green = g, black = b, red = r, 
 Name | Type  |	List? | Description
 ---- | ----- |  ----- | -----------
 colors       |string| true|   Select cards with the chosen color.
-cmc          |string| true|   Select cards with the chosen converted mana cost.
+cmc          |string| false|   Select cards with the chosen converted mana cost.
 name         |string| false|  A fuzzy match on a card's name.
 oracle       |string| false|  A fuzzy match on a card's Oracle rules text.
 rarity       |string| false|  Select cards printed at this rarity. Options are common, uncommon, rare and mythic.
@@ -105,6 +105,24 @@ Clash resolved! @matt is the winner!
 @patrick drew Mountain, which has a converted mana cost of 0.
 @matt drew Island, which has a converted mana cost of 0.
 It's a draw!
+```
+
+## Confused about a MtG term? Look up its' description!
+
+**Simply type:**
+
+```
+Format:
+[bot] mtg term [term]
+
+Example:
+examplebot mtg term trample
+```
+
+**Sample output:**
+
+```
+When a creature with trample attacks and is blocked by an opponent's creature, if the blocking creature has less toughness than the attacking creature has power, any additional damage not dealt to the blocking creature can still go through to damage the defending player or planeswalker.
 ```
 
 ## Notes
