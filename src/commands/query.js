@@ -1,15 +1,6 @@
 var mtg = require('mtgsdk');
 var gatherer = require('../utils/gatherer');
-
-var paramMap = {
-    colors: 'colors',
-    name: 'name',
-    oracle: 'text',
-    rarity: 'rarity',
-    subTypes: 'subtypes',
-    superTypes: 'supertypes',
-    types: 'types'
-};
+var params = require('../mappers/params');
 
 function buildQuery(userInput) {
     var paramParts, param, mappedParam, value, query = {},
@@ -19,12 +10,12 @@ function buildQuery(userInput) {
         paramParts = words[i].split('=');
         param = paramParts[0].trim();
         value = paramParts[1].trim();
-        mappedParam = paramMap[param];
+        mappedParam = params.toGathererParam(param);
 
         if (!mappedParam) {
             return {
                 error: param,
-                validParams: Object.keys(paramMap).join(', ')
+                validParams: Object.keys(params.toList()).join(', ')
             };
         } else {
             query[mappedParam] = value;

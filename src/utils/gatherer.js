@@ -1,3 +1,5 @@
+var colors = require('../mappers/colors');
+
 var MULTIVERSE_ID_QUERY = 'Pages/Card/Details.aspx?multiverseid={id}';
 var PARAMS_QUERY = 'Search/Default.aspx?action=advanced&{params}';
 
@@ -45,7 +47,9 @@ module.exports = {
                 case 'supertypes':
                     return 'supertype=+{value}'.replace('{value}', buildComplexParam(params[key], true));
                 case 'colors':
-                    return 'color=+{value}'.replace('{value}', buildComplexParam(params[key], false));
+                    var gathererColor = colors.toGathererColor(params[key]);
+
+                    return 'color=+{value}'.replace('{value}', buildComplexParam(gathererColor, false));
                 default:
                     return '';
             }
