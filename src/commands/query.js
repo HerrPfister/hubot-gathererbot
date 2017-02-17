@@ -1,4 +1,6 @@
 var mtg = require('mtgsdk');
+var _ = require('lodash');
+
 var gatherer = require('../utils/gatherer');
 var params = require('../mappers/params');
 
@@ -22,8 +24,8 @@ function buildQuery(userInput) {
         }
     }
 
-    query.pageSize = 5;
-    query.orderBy = 'mutliverseid';
+    query.pageSize = 25;
+    query.orderBy = 'name';
 
     return query;
 }
@@ -40,13 +42,13 @@ function findAllCards(query, robot) {
             var emptyMessage = 'I\'m sorry we could not find a card with those params.';
 
             if (cards.length > 0) {
-                robot.send(buildCardListText(cards));
+                robot.send(buildCardListText(_.uniqBy(cards, 'name')));
                 robot.send(gatherer.buildParamsQuery(query));
             } else {
                 robot.send(emptyMessage);
             }
         })
-        .catch(function (err) {
+        .catch(function () {
             robot.send('Something went wrong getting cards with those parameters. Please try again later.');
         });
 }

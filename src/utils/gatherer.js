@@ -35,17 +35,17 @@ module.exports = {
         var paramsQuery = Object.keys(params).map(function (key) {
             switch(key) {
                 case 'name':
-                    return 'name=+["{value}"]'.replace('{value}', params[key]);
+                    return 'name=|["{value}"]'.replace('{value}', params[key]);
                 case 'text':
-                    return 'text=+["{value}"]'.replace('{value}', params[key]);
+                    return 'text=|["{value}"]'.replace('{value}', params[key]);
                 case 'types':
-                    return 'type=+{value}'.replace('{value}', buildComplexParam(params[key], true));
+                    return 'type=|{value}'.replace('{value}', buildComplexParam(params[key], true));
                 case 'subtypes':
-                    return 'subtype=+{value}'.replace('{value}', buildComplexParam(params[key], true));
+                    return 'subtype=|{value}'.replace('{value}', buildComplexParam(params[key], true));
                 case 'supertypes':
-                    return 'supertype=+{value}'.replace('{value}', buildComplexParam(params[key], true));
+                    return 'supertype=|{value}'.replace('{value}', buildComplexParam(params[key], true));
                 case 'colorIdentity':
-                    return 'color=+{value}'.replace('{value}', buildComplexParam(params[key], false));
+                    return 'color=|{value}'.replace('{value}', buildComplexParam(params[key], false));
                 default:
                     return '';
             }
