@@ -1,4 +1,5 @@
 var mtg = require('mtgsdk');
+var gatherer = require('../utils/gatherer');
 
 var paramMap = {
     colors: 'colors',
@@ -48,11 +49,13 @@ function findAllCards(query, robot) {
 
             if (cards.length > 0) {
                 robot.send(buildCardListText(cards));
+                robot.send(gatherer.buildParamsQuery(query));
             } else {
                 robot.send(emptyMessage);
             }
         })
-        .catch(function () {
+        .catch(function (err) {
+            console.log(JSON.stringify(err));
             robot.send('Something went wrong getting cards with those parameters. Please try again later.');
         });
 }

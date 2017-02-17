@@ -1,4 +1,5 @@
 var mtg = require('mtgsdk');
+var gatherer = require('../utils/gatherer');
 
 function findCard(robot) {
     var name = robot.match[1].trim().toLowerCase();
@@ -9,6 +10,7 @@ function findCard(robot) {
 
             if (cards.length > 0 && cards[0].name.toLowerCase() === name) {
                 robot.send(cards[0].imageUrl);
+                robot.send(gatherer.buildMultiverseIdQuery(cards[0].multiverseid))
             } else {
                 robot.send(emptyMessage);
             }

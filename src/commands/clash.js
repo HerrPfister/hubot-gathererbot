@@ -1,5 +1,6 @@
 var async = require('async');
 var mtg = require('mtgsdk');
+var gatherer = require('../utils/gatherer');
 
 var CLASH_DRAW = 'It\'s a draw!';
 
@@ -28,14 +29,20 @@ function getRandomCard(next) {
 }
 
 function handleSuccess(robot, response) {
-    var playerName = robot.message.user.name,
+    var opponentsCard = response.opponent[0],
+        playersCard = response.player[0],
+        playerName = robot.message.user.name,
         opponentName = robot.match[1],
-        playerCMC = response.player[0].cmc || 0,
-        opponentCMC = response.opponent[0].cmc || 0;
+        playerCMC = playersCard.cmc || 0,
+        opponentCMC = opponentsCard.cmc || 0;
 
     robot.send(getClashDefaultString(playerName, opponentName));
-    robot.send(getClashCardDrawString(playerName, response.player[0]));
-    robot.send(getClashCardDrawString(opponentName, response.opponent[0]));
+
+    robot.send(getClashCardDrawString(playerName, playersCard));
+    robot.send(gatherer.buildMultiverseIdQuery(playersCard.multiverseid));
+
+    robot.send(getClashCardDrawString(opponentName, opponentsCard));
+    robot.send(gatherer.buildMultiverseIdQuery(opponentsCard.multiverseid));
 
     if (playerCMC > opponentCMC) {
         robot.send(getClashWinnerString(playerName));
