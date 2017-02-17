@@ -3,10 +3,10 @@ var colors = require('../mappers/colors');
 var MULTIVERSE_ID_QUERY = 'Pages/Card/Details.aspx?multiverseid={id}';
 var PARAMS_QUERY = 'Search/Default.aspx?action=advanced&{params}';
 
-function wrapMessage(message) {
-    var uri = 'View it in the gatherer: http://gatherer.wizards.com/Pages/{message}'.replace('{message}', message);
+function wrapMessage(params) {
+    var uri = encodeURI('http://gatherer.wizards.com/Pages/{params}'.replace('{params}', params));
 
-    return encodeURI(uri);
+    return 'View it in the gatherer: {uri}'.replace('{uri}', uri);
 }
 
 function buildComplexParam(values, useQuotes) {
