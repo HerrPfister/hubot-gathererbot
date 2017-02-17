@@ -21,12 +21,12 @@
 
 var clash = require('./commands/clash'),
     findCard = require('./commands/find'),
-    findAllCards = require('./commands/find-all'),
+    queryCards = require('./commands/query'),
     randomCard = require('./commands/random');
 
 module.exports = function (robot) {
     robot.respond(/mtg\s+clash\s+(.*)/i, clash);
-    robot.respond(/mtg\s+query\s+(.*)/i, findAllCards);
+    robot.respond(/mtg\s+query\s+(.*)/i, queryCards);
     robot.respond(/mtg\s+find\s+(.*)/i, findCard);
     robot.respond(/mtg\s+random/i, randomCard);
 };
