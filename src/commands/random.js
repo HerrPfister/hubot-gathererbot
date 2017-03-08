@@ -2,7 +2,7 @@ var mtg = require('mtgsdk');
 var gatherer = require('../utils/gatherer');
 
 function randomCard(robot) {
-    mtg.card.where({ random: true, pageSize: 1 })
+    mtg.card.where({random: true, pageSize: 1})
         .then(function (cards) {
             var emptyMessage = 'There was an error getting a random card. Please try again later.';
 

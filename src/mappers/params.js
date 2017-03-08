@@ -1,17 +1,8 @@
-var map = {
-    cmc: 'cmc',
-    colors: 'colorIdentity',
-    name: 'name',
-    oracle: 'text',
-    rarity: 'rarity',
-    subTypes: 'subtypes',
-    superTypes: 'supertypes',
-    types: 'types'
-};
+var gathererParams = require('../constants/gatherer-params');
 
 module.exports = {
     toGathererParam: function (value) {
-        return map[value];
+        return gathererParams[value];
     },
     toList: function () {
         return Object.keys(map);

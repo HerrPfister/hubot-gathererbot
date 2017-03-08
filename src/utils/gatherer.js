@@ -33,7 +33,7 @@ module.exports = {
     },
     buildParamsQuery: function (params) {
         var paramsQuery = Object.keys(params).map(function (key) {
-            switch(key) {
+            switch (key) {
                 case 'cmc':
                     return 'cmc=|["{value}"]'.replace('{value}', params[key]);
                 case 'name':
@@ -51,7 +51,9 @@ module.exports = {
                 default:
                     return '';
             }
-        }).filter(function (value) { return value; }).join('&');
+        }).filter(function (value) {
+            return value;
+        }).join('&');
 
         return wrapMessage(PARAMS_QUERY.replace('{params}', paramsQuery));
     }

@@ -4,7 +4,7 @@ var gatherer = require('../utils/gatherer');
 
 var CLASH_DRAW = 'It\'s a draw!';
 
-var VALID_TYPES = ['instant', 'sorcery', 'creature', 'artifact', 'land', 'enchantment', 'planeswalker'].join('|');
+var VALID_TYPES = [ 'instant', 'sorcery', 'creature', 'artifact', 'land', 'enchantment', 'planeswalker' ].join('|');
 
 function getClashWinnerString(winnerName) {
     return 'Clash resolved! ' + winnerName + ' is the winner!';

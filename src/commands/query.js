@@ -17,7 +17,7 @@ function buildQuery(userInput) {
         if (!mappedParam) {
             return {
                 error: param,
-                validParams: Object.keys(params.toList()).join(', ')
+                validParams: params.toList().join(', ')
             };
         } else {
             query[mappedParam] = value;

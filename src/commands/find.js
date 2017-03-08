@@ -5,10 +5,12 @@ var gatherer = require('../utils/gatherer');
 function findCard(robot) {
     var name = robot.match[1].trim().toLowerCase();
 
-    mtg.card.where({ name: name })
+    mtg.card.where({name: name})
         .then(function (cards) {
             var emptyMessage = 'I\'m sorry we could not find a card with the name ' + name + '.',
-                card = _.find(cards, function (c) { return c.imageUrl && c.name.toLowerCase() === name.toLowerCase() });
+                card = _.find(cards, function (c) {
+                    return c.imageUrl && c.name.toLowerCase() === name.toLowerCase()
+                });
 
             if (card) {
                 robot.send(card.imageUrl);
