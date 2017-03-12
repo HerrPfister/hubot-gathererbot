@@ -1,7 +1,7 @@
 'use strict';
 
 var mtgFind = require('../../../../src/commands/find'),
-    mtg = requre('mtgsdk'),
+    mtg = require('mtgsdk'),
 
     fluki = require('fluki'),
 
@@ -29,7 +29,7 @@ describe('mtg find command', function () {
     describe('find', function () {
         describe('when', function () {
             it('should', function () {
-                expect(true).to.be.truthy();
+                expect(true).to.be.ok;
             });
         });
     });

@@ -8,7 +8,7 @@ function randomCard(robot) {
 
             if (cards.length > 0) {
                 robot.send(cards[0].imageUrl);
-                robot.send(gatherer.buildMultiverseIdQuery(cards[0].multiverseid))
+                robot.send(gatherer.buildMultiverseIdQuery(cards[0].multiverseid));
             } else {
                 robot.send(emptyMessage);
             }

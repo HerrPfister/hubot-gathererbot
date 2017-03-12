@@ -1,7 +1,7 @@
 'use strict';
 
 var mtgRandom = require('../../../../src/commands/random'),
-    mtg = requre('mtgsdk'),
+    mtg = require('mtgsdk'),
 
     fluki = require('fluki'),
 
@@ -29,7 +29,7 @@ describe('mtg random command', function () {
     describe('random', function () {
         describe('when', function () {
             it('should', function () {
-                expect(true).to.be.truthy();
+                expect(true).to.be.ok;
             });
         });
     });

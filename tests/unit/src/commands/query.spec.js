@@ -1,7 +1,7 @@
 'use strict';
 
 var mtgQuery = require('../../../../src/commands/query'),
-    mtg = requre('mtgsdk'),
+    mtg = require('mtgsdk'),
 
     fluki = require('fluki'),
 
@@ -29,7 +29,7 @@ describe('mtg query command', function () {
     describe('query', function () {
         describe('when', function () {
             it('should', function () {
-                expect(true).to.be.truthy();
+                expect(true).to.be.ok;
             });
         });
     });
