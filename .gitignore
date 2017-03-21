@@ -5,7 +5,6 @@
 node_modules/
 .idea/
 coverage/
-.vagrant/
 .vscode/
 
 ###########
@@ -16,4 +15,3 @@ npm-debug.log
 all_cards.json
 .DS_STORE
 .hubot_history
-Vagrantfile
