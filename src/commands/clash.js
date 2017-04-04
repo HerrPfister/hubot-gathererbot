@@ -37,12 +37,8 @@ function handleSuccess(robot, response) {
         opponentCMC = opponentsCard.cmc || 0;
 
     robot.send(getClashDefaultString(playerName, opponentName));
-
     robot.send(getClashCardDrawString(playerName, playersCard));
-    robot.send(gatherer.buildMultiverseIdQuery(playersCard.multiverseid));
-
     robot.send(getClashCardDrawString(opponentName, opponentsCard));
-    robot.send(gatherer.buildMultiverseIdQuery(opponentsCard.multiverseid));
 
     if (playerCMC > opponentCMC) {
         robot.send(getClashWinnerString(playerName));
