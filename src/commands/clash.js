@@ -40,12 +40,14 @@ function handleSuccess(robot, response) {
         ];
 
     if (playerCMC > opponentCMC) {
-        robot.send(messages.push(getClashWinnerString(playerName)).join('\n'));
+        messages.push(getClashWinnerString(playerName));
     } else if (playerCMC < opponentCMC) {
-        robot.send(messages.push(getClashWinnerString(opponentName)).join('\n'));
+        messages.push(getClashWinnerString(opponentName));
     } else {
-        robot.send(messages.push(CLASH_DRAW).join('\n'));
+        messages.push(CLASH_DRAW);
     }
+
+    robot.send(messages.join('\n'));
 }
 
 
