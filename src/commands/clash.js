@@ -9,7 +9,9 @@ function getClashWinnerString(winnerName) {
 }
 
 function getClashCardDrawString(name, card) {
-    return name + ' drew ' + card.name + ', which has a converted mana cost of ' + card.cmc + '.';
+    var cmc = card.cmc ? card.cmc : 0;
+
+    return name + ' drew ' + card.name + ', which has a converted mana cost of ' + cmc + '.';
 }
 
 function getClashDefaultString(player, opponent) {

@@ -42,8 +42,10 @@ function findAllCards(query, robot) {
             var emptyMessage = 'I\'m sorry we could not find a card with those params.';
 
             if (cards.length > 0) {
-                robot.send(buildCardListText(_.uniqBy(cards, 'name')));
-                robot.send(gatherer.buildParamsQuery(query));
+                robot.send([
+                    buildCardListText(_.uniqBy(cards, 'name')),
+                    gatherer.buildParamsQuery(query)
+                ].join('\n'));
             } else {
                 robot.send(emptyMessage);
             }
@@ -59,8 +61,10 @@ function validateQuery(robot) {
     if (!query.error) {
         findAllCards(query, robot);
     } else {
-        robot.send('Invalid query parameter: ' + query.error + '.');
-        robot.send('Valid query parameters are ' + query.validParams + '.');
+        robot.send([
+            'Invalid query parameter: ' + query.error + '.',
+            'Valid query parameters are ' + query.validParams + '.'
+        ].join('\n'));
     }
 }
 

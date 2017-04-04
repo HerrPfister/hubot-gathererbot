@@ -1,4 +1,3 @@
-var MULTIVERSE_ID_QUERY = 'Card/Details.aspx?multiverseid={id}';
 var PARAMS_QUERY = 'Search/Default.aspx?action=advanced&{params}';
 
 function wrapMessage(params) {
@@ -28,14 +27,11 @@ function buildComplexParam(values, useQuotes) {
 }
 
 module.exports = {
-    buildMultiverseIdQuery: function (id) {
-        return wrapMessage(MULTIVERSE_ID_QUERY.replace('{id}', id));
-    },
     buildParamsQuery: function (params) {
         var paramsQuery = Object.keys(params).map(function (key) {
             switch (key) {
                 case 'cmc':
-                    return 'cmc=|["{value}"]'.replace('{value}', params[key]);
+                    return 'cmc=|=["{value}"]'.replace('{value}', params[key]);
                 case 'name':
                     return 'name=|["{value}"]'.replace('{value}', params[key]);
                 case 'text':
