@@ -1,6 +1,6 @@
 {
   "name": "hubot-gathererbot",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "A simple hubot that can look up mtg cards and do other magic related things.",
   "main": "index.js",
   "scripts": {
