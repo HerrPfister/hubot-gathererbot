@@ -1,5 +1,4 @@
 var mtg = require('mtgsdk');
-var gatherer = require('../utils/gatherer');
 
 function randomCard(robot) {
     mtg.card.where({random: true, pageSize: 1})
@@ -8,7 +7,6 @@ function randomCard(robot) {
 
             if (cards.length > 0) {
                 robot.send(cards[0].imageUrl);
-                robot.send(gatherer.buildMultiverseIdQuery(cards[0].multiverseid));
             } else {
                 robot.send(emptyMessage);
             }

@@ -1,6 +1,5 @@
 var _ = require('lodash');
 var mtg = require('mtgsdk');
-var gatherer = require('../utils/gatherer');
 
 function findCard(robot) {
     var name = robot.match[1].trim().toLowerCase();
@@ -14,7 +13,6 @@ function findCard(robot) {
 
             if (card) {
                 robot.send(card.imageUrl);
-                robot.send(gatherer.buildMultiverseIdQuery(card.multiverseid));
             } else {
                 robot.send(emptyMessage);
             }
