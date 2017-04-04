@@ -1,10 +1,8 @@
 var async = require('async');
 var mtg = require('mtgsdk');
-var gatherer = require('../utils/gatherer');
 
 var CLASH_DRAW = 'It\'s a draw!';
-
-var VALID_TYPES = [ 'instant', 'sorcery', 'creature', 'artifact', 'land', 'enchantment', 'planeswalker' ].join('|');
+var VALID_TYPES = ['instant', 'sorcery', 'creature', 'artifact', 'land', 'enchantment', 'planeswalker'].join('|');
 
 function getClashWinnerString(winnerName) {
     return 'Clash resolved! ' + winnerName + ' is the winner!';
@@ -19,7 +17,7 @@ function getClashDefaultString(player, opponent) {
 }
 
 function getRandomCard(next) {
-    return mtg.card.where({ random: true, pageSize: 1, types: VALID_TYPES })
+    return mtg.card.where({random: true, pageSize: 1, types: VALID_TYPES})
         .then(function (cards) {
             next(null, cards)
         })
@@ -34,20 +32,22 @@ function handleSuccess(robot, response) {
         playerName = robot.message.user.name,
         opponentName = robot.match[1],
         playerCMC = playersCard.cmc || 0,
-        opponentCMC = opponentsCard.cmc || 0;
-
-    robot.send(getClashDefaultString(playerName, opponentName));
-    robot.send(getClashCardDrawString(playerName, playersCard));
-    robot.send(getClashCardDrawString(opponentName, opponentsCard));
+        opponentCMC = opponentsCard.cmc || 0,
+        messages = [
+            getClashDefaultString(playerName, opponentName),
+            getClashCardDrawString(playerName, playersCard),
+            getClashCardDrawString(opponentName, opponentsCard)
+        ];
 
     if (playerCMC > opponentCMC) {
-        robot.send(getClashWinnerString(playerName));
+        robot.send(messages.push(getClashWinnerString(playerName)).join('\n'));
     } else if (playerCMC < opponentCMC) {
-        robot.send(getClashWinnerString(opponentName));
+        robot.send(messages.push(getClashWinnerString(opponentName)).join('\n'));
     } else {
-        robot.send(CLASH_DRAW);
+        robot.send(messages.push(CLASH_DRAW).join('\n'));
     }
 }
+
 
 function resolveClash(robot) {
     async.parallel({
@@ -57,7 +57,7 @@ function resolveClash(robot) {
         if (!err) {
             handleSuccess(robot, response);
         } else {
-            robot.send('Something went wrong getting a random card. Please try again later.');
+            robot.send('Something went wrong while clashing. Please try again later.');
         }
     });
 }
