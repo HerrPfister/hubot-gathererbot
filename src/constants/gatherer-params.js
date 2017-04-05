@@ -4,8 +4,8 @@ var map = {
     name: 'name',
     oracle: 'text',
     rarity: 'rarity',
-    subTypes: 'subtypes',
-    superTypes: 'supertypes',
+    subtypes: 'subtypes',
+    supertypes: 'supertypes',
     types: 'types'
 };
 

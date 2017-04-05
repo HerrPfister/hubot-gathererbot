@@ -6,24 +6,21 @@ function wrapMessage(params) {
     return 'View it in the gatherer: {uri}'.replace('{uri}', uri);
 }
 
-function buildComplexParam(values, useQuotes) {
-    var optionalValues = values.split('|');
-
-    return optionalValues.map(function (optionalValue) {
-        if (optionalValue.indexOf(',') !== -1) {
-            var requiredValues = optionalValue.split(',');
-
-            return requiredValues.map(function (requiredValue) {
-                var value = useQuotes ? '"{value}"'.replace('value', requiredValue) : requiredValue;
-
-                return '[{value}]'.replace('{value}', value);
-            }).join('+');
-        } else {
-            var value = useQuotes ? '"{value}"'.replace('value', optionalValue) : optionalValue;
-
-            return '[{value}]'.replace('{value}', optionalValue);
-        }
-    }).join('|');
+function convertToGathererSyntax(param, query) {
+    switch(param) {
+        case 'cmc':
+            return query.split(',').map(function (value) { return '=[' + value + ']'}).join('+');
+        case 'types':
+        case 'subtypes':
+        case 'supertypes':
+            return query.split(',').map(function (value) { return '["' + value + '"]'}).join('+');
+        case 'name':
+        case 'text':
+        case 'colorIdentity':
+            return query.split(',').map(function (value) { return '[' + value + ']'}).join('+');
+        default:
+            return '';
+    }
 }
 
 module.exports = {
@@ -31,19 +28,19 @@ module.exports = {
         var paramsQuery = Object.keys(params).map(function (key) {
             switch (key) {
                 case 'cmc':
-                    return 'cmc=|=["{value}"]'.replace('{value}', params[key]);
+                    return 'cmc=|{value}'.replace('{value}', convertToGathererSyntax(key, params[key]));
                 case 'name':
-                    return 'name=|["{value}"]'.replace('{value}', params[key]);
+                    return 'name=|{value}'.replace('{value}', convertToGathererSyntax(key, params[key]));
                 case 'text':
-                    return 'text=|["{value}"]'.replace('{value}', params[key]);
+                    return 'text=|{value}'.replace('{value}', convertToGathererSyntax(key, params[key]));
                 case 'types':
-                    return 'type=|{value}'.replace('{value}', buildComplexParam(params[key], true));
+                    return 'type=|{value}'.replace('{value}', convertToGathererSyntax(key, params[key]));
                 case 'subtypes':
-                    return 'subtype=|{value}'.replace('{value}', buildComplexParam(params[key], true));
+                    return 'subtype=|{value}'.replace('{value}', convertToGathererSyntax(key, params[key]));
                 case 'supertypes':
-                    return 'supertype=|{value}'.replace('{value}', buildComplexParam(params[key], true));
+                    return 'supertype=|{value}'.replace('{value}', convertToGathererSyntax(key, params[key]));
                 case 'colorIdentity':
-                    return 'color=|{value}'.replace('{value}', buildComplexParam(params[key], false));
+                    return 'color=|{value}'.replace('{value}', convertToGathererSyntax(key, params[key]));
                 default:
                     return '';
             }

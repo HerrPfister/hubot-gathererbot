@@ -5,6 +5,6 @@ module.exports = {
         return gathererParams[value];
     },
     toList: function () {
-        return Object.keys(map);
+        return Object.keys(gathererParams);
     }
 };
