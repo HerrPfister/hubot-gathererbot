@@ -1,5 +1,5 @@
 // Description:
-//   A simple hubot that uses the mtg-sdk (and scryfall-sdk) to query for specific cards.
+//   A simple hubot that uses mtg-sdk and scryfall-sdk to query for specific cards.
 //
 // Commands:
 //   hubot mtg query [search param1]=[search value1],[search value2]|[search value3] & [search param2]= ...
@@ -16,7 +16,6 @@ var clash = require('./commands/clash'),
     findCard = require('./commands/find'),
     queryCards = require('./commands/query'),
     randomCard = require('./commands/random'),
-    scry = require('./commands/scry'),
     term = require('./commands/term');
 
 module.exports = function (robot) {
@@ -25,5 +24,5 @@ module.exports = function (robot) {
     robot.respond(/mtg\s+find\s+(.*)/i, findCard);
     robot.respond(/mtg\s+term\s+(.*)/i, term);
     robot.respond(/mtg\s+random/i, randomCard);
-    robot.hear(/\[\[(.*)\]\]/i, scry);
+    robot.hear(/\[\[(.*)\]\]/i, findCard);
 };
