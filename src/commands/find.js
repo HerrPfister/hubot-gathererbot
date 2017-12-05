@@ -23,9 +23,9 @@ function gathererFallback(robot) {
 
     mtg.card.where({name: cardName})
         .then(function (cards) {
-            var emptyMessage = 'I\'m sorry we could not find a card with the name ' + name + '.',
+            var emptyMessage = 'I\'m sorry we could not find a card with the name ' + cardName + '.',
                 card = _.find(cards, function (c) {
-                    return c.imageUrl && c.name.toLowerCase() === name.toLowerCase();
+                    return c.imageUrl && c.name.toLowerCase() === cardName.toLowerCase();
                 });
 
             if (card) {
@@ -35,7 +35,7 @@ function gathererFallback(robot) {
             }
         })
         .catch(function () {
-            robot.send('Something went wrong finding ' + name + '. Please try again later.');
+            robot.send('Something went wrong finding ' + cardName + '. Please try again later.');
         });
 }
 
