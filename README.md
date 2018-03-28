@@ -4,11 +4,11 @@ A simple hubot that uses the [mtg-sdk](https://magicthegathering.io/) for Magic 
 
 ## Searching for cards
 
-**You can search for a specific card by name, like so:**
+**You can search for a specific card one of two ways. Either by calling the bot like so:**
 
 ```
 Format:
-[bot] mtg find [card name]
+<bot> mtg find <card name>
 
 Example
 examplebot mtg find shatter
@@ -19,6 +19,22 @@ examplebot mtg find shatter
 ```
 http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=185053&type=card
 View it in the gatherer: http://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=185053
+```
+
+**Or by putting the card name between two sets of brackets, like so:**
+
+```
+Format:
+[[<card name>]]
+
+Example
+[[shatter]]
+```
+
+**Sample output:**
+
+```
+https://img.scryfall.com/cards/large/en/rix/114.jpg?1517813031
 ```
 
 **You can also search by a series of parameters, like so:**
